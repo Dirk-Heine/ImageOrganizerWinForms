@@ -50,10 +50,16 @@
             this.DeleteEmptyFolders = new System.Windows.Forms.CheckBox();
             this.UseTrashFolder = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.Progress = new System.Windows.Forms.ProgressBar();
+            this.FilesMoved = new System.Windows.Forms.NumericUpDown();
             this.RenewFileNames = new System.Windows.Forms.Button();
+            this.Progress = new System.Windows.Forms.ProgressBar();
             this.CancelWorker = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.FilesToMove = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.OldNameFile = new System.Windows.Forms.TextBox();
+            this.OldNameFolder = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.OpenSettings = new System.Windows.Forms.Button();
             this.Logger = new System.Windows.Forms.ListBox();
@@ -61,7 +67,9 @@
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FilesMoved)).BeginInit();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FilesToMove)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FilesInFolderDataGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -269,28 +277,28 @@
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.Progress);
+            this.groupBox3.Controls.Add(this.FilesToMove);
+            this.groupBox3.Controls.Add(this.FilesMoved);
             this.groupBox3.Controls.Add(this.UseTrashFolder);
             this.groupBox3.Controls.Add(this.RenewFileNames);
-            this.groupBox3.Controls.Add(this.CancelWorker);
             this.groupBox3.Controls.Add(this.OrganizeFolder);
             this.groupBox3.Controls.Add(this.DeleteEmptyFolders);
             this.groupBox3.Controls.Add(this.groupBox1);
             this.groupBox3.Controls.Add(this.groupBox2);
-            this.groupBox3.Location = new System.Drawing.Point(422, 65);
+            this.groupBox3.Location = new System.Drawing.Point(431, 128);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(451, 140);
+            this.groupBox3.Size = new System.Drawing.Size(451, 139);
             this.groupBox3.TabIndex = 7;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Organizing";
             // 
-            // Progress
+            // FilesMoved
             // 
-            this.Progress.Location = new System.Drawing.Point(9, 108);
-            this.Progress.Name = "Progress";
-            this.Progress.Size = new System.Drawing.Size(147, 23);
-            this.Progress.TabIndex = 7;
-            this.Progress.Visible = false;
+            this.FilesMoved.Enabled = false;
+            this.FilesMoved.Location = new System.Drawing.Point(88, 111);
+            this.FilesMoved.Name = "FilesMoved";
+            this.FilesMoved.Size = new System.Drawing.Size(70, 20);
+            this.FilesMoved.TabIndex = 6;
             // 
             // RenewFileNames
             // 
@@ -302,11 +310,19 @@
             this.RenewFileNames.UseVisualStyleBackColor = true;
             this.RenewFileNames.Click += new System.EventHandler(this.RenewFileNames_Click);
             // 
+            // Progress
+            // 
+            this.Progress.Location = new System.Drawing.Point(123, 244);
+            this.Progress.Name = "Progress";
+            this.Progress.Size = new System.Drawing.Size(189, 23);
+            this.Progress.TabIndex = 7;
+            this.Progress.Visible = false;
+            // 
             // CancelWorker
             // 
-            this.CancelWorker.Location = new System.Drawing.Point(9, 81);
+            this.CancelWorker.Location = new System.Drawing.Point(321, 244);
             this.CancelWorker.Name = "CancelWorker";
-            this.CancelWorker.Size = new System.Drawing.Size(147, 23);
+            this.CancelWorker.Size = new System.Drawing.Size(95, 23);
             this.CancelWorker.TabIndex = 3;
             this.CancelWorker.Text = "Cancel";
             this.CancelWorker.UseVisualStyleBackColor = true;
@@ -317,18 +333,63 @@
             // 
             this.groupBox4.Controls.Add(this.AnalyzeFolderInput);
             this.groupBox4.Controls.Add(this.AnalyzeWithSubFolders);
-            this.groupBox4.Location = new System.Drawing.Point(422, 12);
+            this.groupBox4.Controls.Add(this.label5);
+            this.groupBox4.Controls.Add(this.OldNameFile);
+            this.groupBox4.Controls.Add(this.OldNameFolder);
+            this.groupBox4.Controls.Add(this.label6);
+            this.groupBox4.Location = new System.Drawing.Point(433, 12);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(287, 49);
+            this.groupBox4.Size = new System.Drawing.Size(449, 106);
             this.groupBox4.TabIndex = 8;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Analyzing";
+            // 
+            // FilesToMove
+            // 
+            this.FilesToMove.Enabled = false;
+            this.FilesToMove.Location = new System.Drawing.Point(9, 111);
+            this.FilesToMove.Name = "FilesToMove";
+            this.FilesToMove.Size = new System.Drawing.Size(70, 20);
+            this.FilesToMove.TabIndex = 6;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(15, 46);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(81, 13);
+            this.label5.TabIndex = 1;
+            this.label5.Text = "Old folder name";
+            // 
+            // OldNameFile
+            // 
+            this.OldNameFile.Location = new System.Drawing.Point(108, 69);
+            this.OldNameFile.Name = "OldNameFile";
+            this.OldNameFile.Size = new System.Drawing.Size(308, 20);
+            this.OldNameFile.TabIndex = 0;
+            // 
+            // OldNameFolder
+            // 
+            this.OldNameFolder.Location = new System.Drawing.Point(108, 43);
+            this.OldNameFolder.Name = "OldNameFolder";
+            this.OldNameFolder.Size = new System.Drawing.Size(308, 20);
+            this.OldNameFolder.TabIndex = 0;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(15, 72);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(69, 13);
+            this.label6.TabIndex = 1;
+            this.label6.Text = "Org file name";
             // 
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Items.AddRange(new object[] {
             "Possible TAGS:",
+            "<TAG> => Placeholder (important for renaming existing structure)",
             "<CAM> => Camera type",
             "<NUM> => Counting number",
             "<YEAR> => Year taken / Year last modified",
@@ -340,14 +401,14 @@
             "<SEC>"});
             this.listBox1.Location = new System.Drawing.Point(18, 128);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(398, 82);
+            this.listBox1.Size = new System.Drawing.Size(398, 108);
             this.listBox1.TabIndex = 9;
             // 
             // OpenSettings
             // 
-            this.OpenSettings.Location = new System.Drawing.Point(726, 19);
+            this.OpenSettings.Location = new System.Drawing.Point(18, 244);
             this.OpenSettings.Name = "OpenSettings";
-            this.OpenSettings.Size = new System.Drawing.Size(147, 23);
+            this.OpenSettings.Size = new System.Drawing.Size(95, 23);
             this.OpenSettings.TabIndex = 3;
             this.OpenSettings.Text = "Save settings";
             this.OpenSettings.UseVisualStyleBackColor = true;
@@ -356,9 +417,9 @@
             // Logger
             // 
             this.Logger.FormattingEnabled = true;
-            this.Logger.Location = new System.Drawing.Point(18, 216);
+            this.Logger.Location = new System.Drawing.Point(18, 281);
             this.Logger.Name = "Logger";
-            this.Logger.Size = new System.Drawing.Size(855, 290);
+            this.Logger.Size = new System.Drawing.Size(855, 225);
             this.Logger.TabIndex = 10;
             // 
             // FilesInFolderDataGrid
@@ -375,9 +436,11 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(885, 524);
+            this.Controls.Add(this.Progress);
             this.Controls.Add(this.FilesInFolderDataGrid);
             this.Controls.Add(this.Logger);
             this.Controls.Add(this.OpenSettings);
+            this.Controls.Add(this.CancelWorker);
             this.Controls.Add(this.listBox1);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -399,8 +462,10 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FilesMoved)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.FilesToMove)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.FilesInFolderDataGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -439,6 +504,12 @@
         private System.Windows.Forms.ProgressBar Progress;
         private System.Windows.Forms.Button CancelWorker;
         private System.Windows.Forms.DataGridView FilesInFolderDataGrid;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.TextBox OldNameFolder;
+        private System.Windows.Forms.TextBox OldNameFile;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.NumericUpDown FilesToMove;
+        private System.Windows.Forms.NumericUpDown FilesMoved;
     }
 }
 

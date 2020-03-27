@@ -36,8 +36,8 @@ namespace ImageOrganizerWinForms.ViewModel
         #region Properties
         private AbortableBackgroundWorker _WorkerUi;
         private int _FileCounter = 0;
-        private int _CountFilesToMove = 0;
-        private int _CountFilesMoved = 0;
+        //private int FilesToMove.Value = 0;
+        //private int FilesMoved.Value = 0;
         private int _CountFilesDeleted = 0;
         private int _CountFoldersDeleted = 0;
 
@@ -53,16 +53,22 @@ namespace ImageOrganizerWinForms.ViewModel
         {
             public string FileName { get { return _FileName; } set { _FileName = value;} }
             private string _FileName;
-            public string FileNameNew { get { return _FileNameNew; } set { _FileNameNew = value; } }
-            private string _FileNameNew;
             public string FilePath { get { return _FilePath; } set { _FilePath = value; } }
             private string _FilePath;
-            public string FilePathNew { get { return _FilePathNew; } set { _FilePathNew = value; } }
-            private string _FilePathNew;
             public string DirectoryName { get { return _DirectoryName; } set { _DirectoryName = value; } }
             private string _DirectoryName;
+            public string FileNameNew { get { return _FileNameNew; } set { _FileNameNew = value; } }
+            private string _FileNameNew;
+            public string FilePathNew { get { return _FilePathNew; } set { _FilePathNew = value; } }
+            private string _FilePathNew;
             public string DirectoryNameNew { get { return _DirectoryNameNew; } set { _DirectoryNameNew = value; } }
             private string _DirectoryNameNew;
+            public string FileNameOld { get { return _FileNameOld; } set { _FileNameOld = value; } }
+            private string _FileNameOld;
+            public string FilePathOld { get { return _FilePathOld; } set { _FilePathOld = value; } }
+            private string _FilePathOld;
+            public string DirectoryNameOld { get { return _DirectoryNameOld; } set { _DirectoryNameOld = value; } }
+            private string _DirectoryNameOld;
             public string FileType { get { return _FileType; } set { _FileType = value; } }
             private string _FileType;
             public long FileSize { get { return _FileSize; } set { _FileSize = value; } }
@@ -71,6 +77,8 @@ namespace ImageOrganizerWinForms.ViewModel
             private string _CameraType;
             public DateTime DateTaken { get { return _DateTaken; } set { _DateTaken = value; } }
             private DateTime _DateTaken;
+            public string Tag { get { return _Tag; } set { _Tag = value; } }
+            private string _Tag;
 
             public FileData(string fileName = "", string fileType = "", string filePath = "")
             {
@@ -107,6 +115,8 @@ namespace ImageOrganizerWinForms.ViewModel
             FolderPathOutput.Text = ModelSettings.FolderPathOutput;
             NewNameFolder.Text = ModelSettings.NewNameFolder;
             NewNameFile.Text = ModelSettings.NewNameFile;
+            OldNameFolder.Text = ModelSettings.OldNameFolder;
+            OldNameFile.Text = ModelSettings.OldNameFile;
 
             AnalyzeWithSubFolders.Checked = ModelSettings.AnalyzeWithSubfolders;
             CheckedJustRename.Checked = ModelSettings.JustRenameFiles;
@@ -163,6 +173,8 @@ namespace ImageOrganizerWinForms.ViewModel
             ModelSettings.FolderPathOutput = FolderPathOutput.Text;
             ModelSettings.NewNameFile = NewNameFile.Text;
             ModelSettings.NewNameFolder = NewNameFolder.Text;
+            ModelSettings.OldNameFile = OldNameFile.Text;
+            ModelSettings.OldNameFolder = OldNameFolder.Text;
             ModelSettings.AnalyzeWithSubfolders = AnalyzeWithSubFolders.Checked;
             ModelSettings.JustRenameFiles = CheckedJustRename.Checked;
             ModelSettings.FolderForCameraType = CheckedCameraType.Checked;
@@ -242,7 +254,7 @@ namespace ImageOrganizerWinForms.ViewModel
         {
             FilesInFolder = new BindingList<FileData>();
             _FileCounter = 0;
-            _CountFilesToMove = 0;
+            FilesToMove.Value = 0;
 
             // find all projects in default folder and subfolders
             ShowMessage($"Getting all file names in \"{FolderPathInput.Text}\"");
@@ -390,7 +402,7 @@ namespace ImageOrganizerWinForms.ViewModel
                     //    // TODO: Woher krieg ich die Metadaten??
                     //}
 
-                    if (!f.FilePath.Equals(f.FilePathNew)) _CountFilesToMove++;
+                    if (!f.FilePath.Equals(f.FilePathNew)) FilesToMove.Value++;
 
                     // Create new name
                     _GetNewFileName(ref f);
@@ -412,7 +424,7 @@ namespace ImageOrganizerWinForms.ViewModel
             }
             FilesInFolder.RaiseListChangedEvents = true;
             ShowMessage($"Valid files found: {_FileCounter}");
-            ShowMessage($"Files to move: {_CountFilesToMove}");
+            ShowMessage($"Files to move: {FilesToMove.Value}");
         }
 
         //public static class ExtFileProp
@@ -543,8 +555,11 @@ namespace ImageOrganizerWinForms.ViewModel
             f.FileNameNew = _ReplaceTags(NewNameFile.Text, f) + f.FileType.ToLower();
             f.DirectoryNameNew = Toolbox.CombinePathAndFileName(FolderPathOutput.Text, _ReplaceTags(NewNameFolder.Text, f));
             f.FilePathNew = Toolbox.CombinePathAndFileName(f.DirectoryNameNew, f.FileNameNew);
-        }
 
+            f.FileNameOld = _ReplaceTags(OldNameFile.Text, f) + f.FileType.ToLower();
+            f.DirectoryNameOld = Toolbox.CombinePathAndFileName(FolderPathOutput.Text, _ReplaceTags(OldNameFolder.Text, f));
+            f.FilePathOld = Toolbox.CombinePathAndFileName(f.DirectoryNameOld, f.FileNameOld);
+        }
         private string _ReplaceTags(string s, FileData f)
         {
             string cam = f.CameraType; ;
@@ -561,6 +576,7 @@ namespace ImageOrganizerWinForms.ViewModel
             newString = newString.Replace("<MIN>", f.DateTaken.Minute.ToString("d2"));
             newString = newString.Replace("<SEC>", f.DateTaken.Second.ToString("d2"));
             newString = newString.Replace("<NUM>", (_FileCounter).ToString("d5"));
+            newString = newString.Replace("<TAG>", f.Tag);
             return newString;
         }
         private string _GetMonthName(int i)
@@ -599,7 +615,7 @@ namespace ImageOrganizerWinForms.ViewModel
             }
             _FileCounter = 0;
             _CountFilesDeleted = 0;
-            _CountFilesMoved = 0;
+            FilesMoved.Value = 0;
             _CountFoldersDeleted = 0;
             if (FilesInFolder == null)
             {
@@ -649,16 +665,21 @@ namespace ImageOrganizerWinForms.ViewModel
                         if (CheckedJustRename.Checked)
                         {
                             // Rename
-                            string filePath = Toolbox.CombinePathAndFileName(f.DirectoryName, newName);
+                            string fileDir = f.DirectoryName.Replace(f.DirectoryNameOld, f.DirectoryNameNew);
+                            string filePath = Toolbox.CombinePathAndFileName(fileDir, newName);
                             File.Move(f.FilePath, filePath);
-                            msg = $"Renamed {f.FilePath.Replace(FolderPathInput.Text, "")} to: {filePath.Replace(FolderPathOutput.Text, "")}";
+                            msg = $"Renamed {f.FilePath.Replace(FolderPathInput.Text, "")} to: {filePath.Replace(FolderPathInput.Text, "")}";
+                            if (f.DirectoryName.StartsWith(f.DirectoryNameOld))
+                            {
+                                msg = $"Changed directory {f.DirectoryNameOld.Replace(FolderPathInput.Text, "")} to: {f.DirectoryNameNew.Replace(FolderPathInput.Text, "")}";
+                            }
                         }
                         else
                         {
                             File.Move(f.FilePath, newPath);
                             msg = $"Moved {f.FilePath.Replace(FolderPathInput.Text, "")} to: {newPath.Replace(FolderPathOutput.Text, "")}";
                         }
-                        _CountFilesMoved++;
+                        FilesMoved.Value++;
                     }
 
                     // canceling
@@ -681,7 +702,7 @@ namespace ImageOrganizerWinForms.ViewModel
                 _DeleteEmptyDirectories(FolderPathInput.Text);
             }
 
-            ShowMessage($"Files moved: {_CountFilesMoved}");
+            ShowMessage($"Files moved: {FilesMoved.Value}");
             ShowMessage($"Files deleted: {_CountFilesDeleted}");
             ShowMessage($"Folders deleted: {_CountFoldersDeleted}");
         }

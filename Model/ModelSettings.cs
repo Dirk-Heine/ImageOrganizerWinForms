@@ -29,6 +29,8 @@ namespace ImageOrganizerWinForms.Model
         public static string FolderPathOutput { get; set; }
         public static string NewNameFolder { get; set; }
         public static string NewNameFile { get; set; }
+        public static string OldNameFolder { get; set; }
+        public static string OldNameFile { get; set; }
 
         public static bool AnalyzeWithSubfolders { get; set; }
         public static bool JustRenameFiles { get; set; }
@@ -54,6 +56,8 @@ namespace ImageOrganizerWinForms.Model
             XElement newNames = new XElement("NewNames");
             newNames.Add(new XElement("NewNameFolder", NewNameFolder));
             newNames.Add(new XElement("NewNameFile", NewNameFile));
+            newNames.Add(new XElement("OldNameFolder", OldNameFolder));
+            newNames.Add(new XElement("OldNewNameFile", OldNameFile));
             defaults.Add(newNames);
 
             // Bools
@@ -113,8 +117,11 @@ namespace ImageOrganizerWinForms.Model
                     XElement newNames = savedDefaults.Element("NewNames");
                     NewNameFolder = newNames.Element("NewNameFolder").Value.ToString();
                     NewNameFile = newNames.Element("NewNameFile").Value.ToString();
+                    OldNameFolder = newNames.Element("OldNameFolder").Value.ToString();
+                    OldNameFile = newNames.Element("OldNameFile").Value.ToString();
                 }
                 catch { }
+
                 // Bools
                 try
                 {
@@ -170,11 +177,19 @@ namespace ImageOrganizerWinForms.Model
             }
             if (string.IsNullOrEmpty(NewNameFolder))
             {
-                NewNameFolder = $"<CAM>{FolderSeparator}<YEAR>";
+                NewNameFolder = $"<YEAR>{FolderSeparator}<CAM>";
             }
             if (string.IsNullOrEmpty(NewNameFile))
             {
-                NewNameFile = "<YEAR>_<MONTH>_<DAY>-<HOUR>h_<MIN>min_<SEC>s";
+                NewNameFile = "<YEAR><MONTH><DAY>-<HOUR><MIN><SEC>-<TAG>";
+            }
+            if (string.IsNullOrEmpty(OldNameFolder))
+            {
+                OldNameFolder = $"<YEAR>{FolderSeparator}<MONTH><MONTHNAME>_<TAG>";
+            }
+            if (string.IsNullOrEmpty(OldNameFile))
+            {
+                OldNameFile = "<YEAR>_<MONTH>_<DAY>-<HOUR>h_<MIN>min_<SEC>s";
             }
         }
     }
