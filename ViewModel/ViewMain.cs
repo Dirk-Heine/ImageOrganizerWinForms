@@ -36,6 +36,7 @@ namespace ImageOrganizerWinForms.ViewModel
         #region Properties
         private AbortableBackgroundWorker _WorkerUi;
         private int _FileCounter = 0;
+        private int _OtherFilesCounter = 0;
         //private int FilesToMove.Value = 0;
         //private int FilesMoved.Value = 0;
         private int _CountFilesDeleted = 0;
@@ -46,6 +47,7 @@ namespace ImageOrganizerWinForms.ViewModel
         private static Regex r = new Regex(":");
 
         public BindingList<FileData> FilesInFolder;
+        public BindingList<FileData> OtherFilesInFolder;
         public BindingSource FilesInFolderSource;
         public string FolderTrash { get { return Toolbox.CombinePathAndFileName(FolderPathOutput.Text, "TRASH"); } }
 
@@ -254,7 +256,9 @@ namespace ImageOrganizerWinForms.ViewModel
         {
             FilesInFolder = new BindingList<FileData>();
             _FileCounter = 0;
-            FilesToMove.Value = 0;
+            OtherFilesInFolder = new BindingList<FileData>();
+            _OtherFilesCounter = 0;
+            Invoke((Action)delegate { FilesToMove.Value = 0; });
 
             // find all projects in default folder and subfolders
             ShowMessage($"Getting all file names in \"{FolderPathInput.Text}\"");
@@ -322,210 +326,28 @@ namespace ImageOrganizerWinForms.ViewModel
                         }
                     }
 
-                    //var dict = GetExtendedFileProperties(f.FilePath);
-                    //string cameraType = GetExtendedFileProperty(f.FilePath, ExtFileProp.CAMERA_TYPE);
-                    //string dateTaken = GetExtendedFileProperty(f.FilePath, ExtFileProp.DATE_TAKEN);
-
-                    //string[] validformats = new[] { "dd.MM.yyyy", "dd.MM.yyyy HH:mm:ss", "dd.MM.yyyy HH:mm" };
-                    //DateTime dateTakenConv;
-                    //if (cameraType != null) f.CameraType = cameraType;
-                    //if (dateTaken != null && DateTime.TryParseExact(dateTaken, validformats,
-                    //    CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTakenConv))
-                    //{
-                    //    f.DateTaken = dateTakenConv;
-                    //}
-
-                    //Dictionary<string, string> ExifInfos = new Dictionary<string, string>();
-                    //IEnumerable<MetadataExtractor.Directory> directories = ImageMetadataReader.ReadMetadata(f.FilePath);
-                    //foreach (var dir in directories)
-                    //{
-                    //    foreach (var tag in dir.Tags)
-                    //    {
-                    //        if (!ExifInfos.ContainsKey(tag.Name))
-                    //        {
-                    //            ExifInfos.Add(tag.Name, tag.Description);
-                    //            _ShowMessage($"[{dir.Name}] {tag.Name} = {tag.Description}");
-                    //        }
-                    //    }
-                    //}
-                    //if (_IsImage(f))
-                    //{
-                    //foreach (var dir in directories)
-                    //    {
-                    //        foreach (var tag in dir.Tags)
-                    //            _ShowMessage($"[{dir.Name}] {tag.Name} = {tag.Description}");
-
-                    //        if (dir.HasError)
-                    //        {
-                    //            foreach (var error in dir.Errors)
-                    //                _ShowMessage($"ERROR: {error}");
-                    //        }
-                    //    }
-
-                    //try
-                    //{
-                    //    // access the date time
-                    //    var subIfdDirectory = directories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
-                    //    var cameraType = subIfdDirectory?.GetString(ExifDirectoryBase.TagModel);
-                    //    if (cameraType != null) f.CameraType = cameraType;
-                    //    var dateTime = subIfdDirectory?.GetDateTime(ExifDirectoryBase.TagDateTime);
-                    //    if (dateTime != null) f.DateTaken = (DateTime)dateTime;
-                    //}
-                    //catch (Exception)
-                    //{
-                    //}
-
-
-                    //using (FileStream fs = new FileStream(f.FilePath, FileMode.Open, FileAccess.Read, FileShare.Read))
-                    //{
-                    //BitmapSource img = BitmapFrame.Create(fs);
-                    //BitmapMetadata md = (BitmapMetadata)img.Metadata;
-
-                    //DateTime date = Convert.ToDateTime(md.DateTaken);
-                    //try
-                    //{
-                    //    f.CameraType = md.CameraModel != null ? md.CameraModel : "Unknown";
-                    //    f.DateTaken = md.DateTaken != null ? date : fi.CreationTime;
-                    //}
-                    //catch (Exception)
-                    //{
-                    //}
-
-                    //if (date != f.DateTaken)
-                    //{
-                    //    // TODO: Aufnahmedatum anpassen!?
-                    //}
-                    //}
-                    //}
-                    //if (_IsVideo(f))
-                    //{
-                    //    // TODO: Woher krieg ich die Metadaten??
-                    //}
-
-                    if (!f.FilePath.Equals(f.FilePathNew)) FilesToMove.Value++;
+                    if (!f.FilePath.Equals(f.FilePathNew)) Invoke((Action)delegate { FilesToMove.Value++; });
 
                     // Create new name
                     _GetNewFileName(ref f);
-                    ShowMessage($"New name {f.FilePath.Replace(FolderPathInput.Text, "")} -> {f.FilePathNew.Replace(FolderPathOutput.Text, "")}");
+                    
+                    ShowMessage($"New name {f.FilePathNew.Replace(FolderPathOutput.Text, "")}");
 
                     // Add file to collection
                     _FileCounter++;
                     FilesInFolder.Add(f);
                 }
-                //else if (f.FileType.Contains("_"))
-                //{
-                //    string ending = f.FileType.Substring(f.FileType.IndexOf('_'));
-                //    string name = f.FilePath.Replace(f.FileType, "") + ending + f.FileType.Replace(ending, "");
-                //    // Rename
-                //    File.Move(f.FilePath, name);
-                //    _ShowMessage($"Renamed {f.FilePath} to: {name}");
-                //}
-
+                else // other files
+                {
+                    // Add file to collection
+                    _OtherFilesCounter++;
+                    OtherFilesInFolder.Add(f);
+                }
             }
             FilesInFolder.RaiseListChangedEvents = true;
             ShowMessage($"Valid files found: {_FileCounter}");
             ShowMessage($"Files to move: {FilesToMove.Value}");
         }
-
-        //public static class ExtFileProp
-        //{
-        //    // 3: Änderungsdatum
-        //    // 12: Aufnahmedatum
-        //    // 30: Kameramodell
-        //    public const int LAST_MODIFIED = 3;
-        //    public const int DATE_TAKEN = 12;
-        //    public const int CAMERA_TYPE = 30;
-        //}
-        //public static string GetExtendedFileProperty(string filePath, int property)
-        //{
-        //    string value = string.Empty;
-        //    string baseFolder = Path.GetDirectoryName(filePath);
-        //    string fileName = Path.GetFileName(filePath);
-
-        //    //Method to load and execute the Shell object for Windows server 8 environment otherwise you get "Unable to cast COM object of type 'System.__ComObject' to interface type 'Shell32.Shell'"
-        //    Type shellAppType = Type.GetTypeFromProgID("Shell.Application");
-        //    Object shell = Activator.CreateInstance(shellAppType);
-        //    Shell32.Folder shellFolder = (Shell32.Folder)shellAppType.InvokeMember("NameSpace", System.Reflection.BindingFlags.InvokeMethod, null, shell, new object[] { baseFolder });
-
-        //    //Parsename will find the specific file I'm looking for in the Shell32.Folder object
-        //    Shell32.FolderItem folderitem = shellFolder.ParseName(fileName);
-        //    if (folderitem != null)
-        //    {
-        //        //Read value of property
-        //        value = shellFolder.GetDetailsOf(folderitem, property);
-        //    }
-        //    //returns string.Empty if no value was found for the specified property
-        //    return value;
-        //}
-
-        //public static string GetExtendedFileProperty(string filePath, string propertyName)
-        //{
-        //    string value = string.Empty;
-        //    string baseFolder = Path.GetDirectoryName(filePath);
-        //    string fileName = Path.GetFileName(filePath);
-
-        //    //Method to load and execute the Shell object for Windows server 8 environment otherwise you get "Unable to cast COM object of type 'System.__ComObject' to interface type 'Shell32.Shell'"
-        //    Type shellAppType = Type.GetTypeFromProgID("Shell.Application");
-        //    Object shell = Activator.CreateInstance(shellAppType);
-        //    Shell32.Folder shellFolder = (Shell32.Folder)shellAppType.InvokeMember("NameSpace", System.Reflection.BindingFlags.InvokeMethod, null, shell, new object[] { baseFolder });
-
-        //    //Parsename will find the specific file I'm looking for in the Shell32.Folder object
-        //    Shell32.FolderItem folderitem = shellFolder.ParseName(fileName);
-        //    if (folderitem != null)
-        //    {
-        //        for (int i = 0; i < short.MaxValue; i++)
-        //        {
-        //            //Get the property name for property index i
-        //            string property = shellFolder.GetDetailsOf(null, i);
-
-        //            //Will be empty when all possible properties has been looped through, break out of loop
-        //            if (String.IsNullOrEmpty(property)) break;
-
-        //            //Skip to next property if this is not the specified property
-        //            if (property != propertyName) continue;
-
-        //            //Read value of property
-        //            value = shellFolder.GetDetailsOf(folderitem, i);
-        //        }
-        //    }
-        //    //returns string.Empty if no value was found for the specified property
-        //    return value;
-        //}
-
-        //public static Dictionary<string,string> GetExtendedFileProperties(string filePath)
-        //{
-        //    string value = string.Empty;
-        //    string baseFolder = Path.GetDirectoryName(filePath);
-        //    string fileName = Path.GetFileName(filePath);
-        //    Dictionary<string, string> dict = new Dictionary<string, string>();
-
-        //    //Method to load and execute the Shell object for Windows server 8 environment otherwise you get "Unable to cast COM object of type 'System.__ComObject' to interface type 'Shell32.Shell'"
-        //    Type shellAppType = Type.GetTypeFromProgID("Shell.Application");
-        //    Object shell = Activator.CreateInstance(shellAppType);
-        //    Shell32.Folder shellFolder = (Shell32.Folder)shellAppType.InvokeMember("NameSpace", System.Reflection.BindingFlags.InvokeMethod, null, shell, new object[] { baseFolder });
-
-        //    //Parsename will find the specific file I'm looking for in the Shell32.Folder object
-        //    Shell32.FolderItem folderitem = shellFolder.ParseName(fileName);
-        //    if (folderitem != null)
-        //    {
-        //        for (int i = 0; i < short.MaxValue; i++)
-        //        {
-        //            //Get the property name for property index i
-        //            string property = shellFolder.GetDetailsOf(null, i);
-
-        //            //Will be empty when all possible properties has been looped through, break out of loop
-        //            if (String.IsNullOrEmpty(property)) break;
-
-        //            //Read value of property
-        //            value = shellFolder.GetDetailsOf(folderitem, i);
-
-        //            //Add to dictionary
-        //            dict.Add(property, value);
-        //        }
-        //    }
-        //    //returns string.Empty if no value was found for the specified property
-        //    return dict;
-        //}
 
         private bool _IsImage(FileData f)
         {
@@ -552,13 +374,89 @@ namespace ImageOrganizerWinForms.ViewModel
 
         private void _GetNewFileName(ref FileData f)
         {
-            f.FileNameNew = _ReplaceTags(NewNameFile.Text, f) + f.FileType.ToLower();
-            f.DirectoryNameNew = Toolbox.CombinePathAndFileName(FolderPathOutput.Text, _ReplaceTags(NewNameFolder.Text, f));
-            f.FilePathNew = Toolbox.CombinePathAndFileName(f.DirectoryNameNew, f.FileNameNew);
+            string folderOutput = CheckedJustRename.Checked ? FolderPathInput.Text : FolderPathOutput.Text;
+            int folderType = 0;
 
+            // Generate old folder
+            string folderStructure = OldNameFolder.Text;
+            f.DirectoryNameOld = _GetFolderName(folderOutput, folderStructure, f, ref folderType);
+            f.Tag = _GetFolderTag(f.DirectoryNameOld, f);
+            if (f.Tag != string.Empty)
+            {
+                f.DirectoryNameOld = _GetFolderName(folderOutput, folderStructure, f, ref folderType);
+            }
             f.FileNameOld = _ReplaceTags(OldNameFile.Text, f) + f.FileType.ToLower();
-            f.DirectoryNameOld = Toolbox.CombinePathAndFileName(FolderPathOutput.Text, _ReplaceTags(OldNameFolder.Text, f));
             f.FilePathOld = Toolbox.CombinePathAndFileName(f.DirectoryNameOld, f.FileNameOld);
+
+            // Generate new name
+            folderStructure = NewNameFolder.Text;
+            f.DirectoryNameNew = _GetFolderName(folderOutput, folderStructure, f, ref folderType);
+            // Try to get tag name out of new folder structure
+            if (f.Tag == string.Empty)
+            {
+                f.Tag = _GetFolderTag(f.DirectoryNameNew, f);
+                if (f.Tag != string.Empty)
+                {
+                    f.DirectoryNameNew = _GetFolderName(folderOutput, NewNameFolder.Text, f, ref folderType);
+                }
+            }
+            f.FileNameNew = _ReplaceTags(NewNameFile.Text, f) + f.FileType.ToLower();
+
+            // if possible: rename old directory
+            string dirNew = f.DirectoryName.Contains(f.DirectoryNameOld) ? f.DirectoryName.Replace(f.DirectoryNameOld, f.DirectoryNameNew) : f.DirectoryNameNew;
+            f.FilePathNew = Toolbox.CombinePathAndFileName(dirNew, f.FileNameNew);
+        }
+        private string _GetFolderName(string folderToCheck, string folderStructure, FileData f, ref int folderType)
+        {
+            string prevStructure, nextStructure;
+            if (folderStructure.Contains("<MONTH><MONTHNAME>"))
+            {
+                prevStructure = folderStructure.Replace("<MONTH><MONTHNAME>", "<MONTHPREV><MONTHNAMEPREV>-<MONTH><MONTHNAME>");
+                nextStructure = folderStructure.Replace("<MONTH><MONTHNAME>", "<MONTH><MONTHNAME>-<MONTHNEXT><MONTHNAMENEXT>");
+            }
+            else
+            {
+                prevStructure = folderStructure.Replace("<MONTH>", "<MONTHPREV>-<MONTH>");
+                nextStructure = folderStructure.Replace("<MONTH>", "<MONTH>-<MONTHNEXT>");
+            }
+
+            // Generate old folder
+            string justTagsFolder = Toolbox.CombinePathAndFileName(folderToCheck, _ReplaceTags(folderStructure, f));
+            string prevMonthFolder = Toolbox.CombinePathAndFileName(folderToCheck,
+                _ReplaceTags(prevStructure, f));
+            string nextMonthFolder = Toolbox.CombinePathAndFileName(folderToCheck,
+                _ReplaceTags(nextStructure, f));
+
+            // Does it match?
+            if (f.DirectoryName.StartsWith(prevMonthFolder) || folderType == 1)
+            {
+                folderType = 1;
+                return prevMonthFolder;
+            }
+            if (f.DirectoryName.StartsWith(nextMonthFolder) || folderType == 2)
+            {
+                folderType = 2;
+                return nextMonthFolder;
+            }
+
+            return justTagsFolder;
+        }
+        private string _GetFolderTag(string folderToCheck, FileData f)
+        {
+            // Check <TAG>
+            if (!f.DirectoryName.StartsWith(folderToCheck))
+            {
+                return string.Empty;
+            }
+
+            string restOfDir = f.DirectoryName.Replace(folderToCheck, "");
+            int endOfFolder = restOfDir.Contains(ModelSettings.FolderSeparator) ? restOfDir.IndexOf(ModelSettings.FolderSeparator) : restOfDir.Length;
+            string retTag = restOfDir.Substring(0, endOfFolder);
+            if (retTag.StartsWith("-") || retTag.StartsWith("_"))
+            {
+                retTag = retTag.Substring(1);
+            }
+            return retTag;
         }
         private string _ReplaceTags(string s, FileData f)
         {
@@ -571,11 +469,17 @@ namespace ImageOrganizerWinForms.ViewModel
             newString = newString.Replace("<YEAR>", f.DateTaken.Year.ToString("d4"));
             newString = newString.Replace("<MONTH>", f.DateTaken.Month.ToString("d2"));
             newString = newString.Replace("<MONTHNAME>", _GetMonthName(f.DateTaken.Month));
+            newString = newString.Replace("<MONTHPREV>", (f.DateTaken.Month - 1).ToString("d2"));
+            newString = newString.Replace("<MONTHNAMEPREV>", _GetMonthName((f.DateTaken.Month - 1)));
+            newString = newString.Replace("<MONTHNEXT>", (f.DateTaken.Month + 1).ToString("d2"));
+            newString = newString.Replace("<MONTHNAMENEXT>", _GetMonthName((f.DateTaken.Month + 1)));
             newString = newString.Replace("<DAY>", f.DateTaken.Day.ToString("d2"));
             newString = newString.Replace("<HOUR>", f.DateTaken.Hour.ToString("d2"));
             newString = newString.Replace("<MIN>", f.DateTaken.Minute.ToString("d2"));
             newString = newString.Replace("<SEC>", f.DateTaken.Second.ToString("d2"));
             newString = newString.Replace("<NUM>", (_FileCounter).ToString("d5"));
+            newString = newString.Replace("<-TAG>", f.Tag == string.Empty ? string.Empty : "-"+f.Tag);
+            newString = newString.Replace("<_TAG>", f.Tag == string.Empty ? string.Empty : "_" + f.Tag);
             newString = newString.Replace("<TAG>", f.Tag);
             return newString;
         }
@@ -615,17 +519,25 @@ namespace ImageOrganizerWinForms.ViewModel
             }
             _FileCounter = 0;
             _CountFilesDeleted = 0;
-            FilesMoved.Value = 0;
+            Invoke((Action)delegate { FilesMoved.Value = 0; });
             _CountFoldersDeleted = 0;
+
+            var directoriesRenamed = new Dictionary<string, string>();
+
             if (FilesInFolder == null)
             {
                 ShowMessage("No files to organize.");
             }
             else
             {
-                foreach (var f in FilesInFolder)
+                //foreach (var f in FilesInFolder)
+                for (int i = 0; i < FilesInFolder.Count; i++)
                 {
+                    FileData f = FilesInFolder[i];
                     _FileCounter++;
+
+                    // rename directory if necessary
+                    _RenameFileData(ref f, directoriesRenamed);
 
                     // No action needed
                     if (f.FilePathNew.Equals(f.FilePath))
@@ -633,53 +545,56 @@ namespace ImageOrganizerWinForms.ViewModel
                         continue;
                     }
 
-                    // Check if file already exists in Output folder
-                    string newPath = f.FilePathNew;
-                    string newName = f.FileNameNew.Replace(f.FileType, "");
-                    int count = 0;
-                    while (File.Exists(newPath))
-                    {
-                        FileInfo fi = new FileInfo(f.FilePathNew);
-                        if (f.FileSize == fi.Length)
-                        {
-                            // -> same size? delete in input folder
-                            _DeleteFile(f);
-                            _CountFilesDeleted++;
-                            break;
-                        }
-                        else
-                        {
-                            // -> same Name? append "_2"
-                            newName = f.FileNameNew + "_" + ++count;
-                            newPath = Toolbox.CombinePathAndFileName(f.DirectoryNameNew, newName + f.FileType);
-                        }
-                    }
-                    f.FileNameNew = newName;
-
-                    string msg = string.Empty;
+                    f.FilePathNew = _NewPathDublicate(f.FilePathNew, f);
+                    f.FileNameNew = f.FilePathNew.Substring(f.FilePathNew.LastIndexOf(f.FileNameNew.Replace(f.FileType, "")));
+                    
                     if (File.Exists(f.FilePath))
                     {
-                        // Check if new directory exists
-                        System.IO.Directory.CreateDirectory(f.DirectoryNameNew);
-
                         if (CheckedJustRename.Checked)
                         {
-                            // Rename
+                            // Rename directory 
+                            // => save renamed directories in dict
+                            // => TODO: recognize sub folder in folder structure!
                             string fileDir = f.DirectoryName.Replace(f.DirectoryNameOld, f.DirectoryNameNew);
-                            string filePath = Toolbox.CombinePathAndFileName(fileDir, newName);
-                            File.Move(f.FilePath, filePath);
-                            msg = $"Renamed {f.FilePath.Replace(FolderPathInput.Text, "")} to: {filePath.Replace(FolderPathInput.Text, "")}";
-                            if (f.DirectoryName.StartsWith(f.DirectoryNameOld))
+                            if (f.DirectoryName.StartsWith(f.DirectoryNameOld) && f.DirectoryNameNew != f.DirectoryNameOld)// && !Directory.Exists(f.DirectoryNameNew))
                             {
-                                msg = $"Changed directory {f.DirectoryNameOld.Replace(FolderPathInput.Text, "")} to: {f.DirectoryNameNew.Replace(FolderPathInput.Text, "")}";
+                                try
+                                {
+                                    Directory.Move(f.DirectoryNameOld, f.DirectoryNameNew);
+                                    directoriesRenamed.Add(f.DirectoryNameOld, f.DirectoryNameNew);
+                                    // rename directory in file data if necessary
+                                    _RenameFileData(ref f, directoriesRenamed);
+                                    ShowMessage($"Renamed directory {f.DirectoryName.Replace(FolderPathInput.Text, "")} to: {fileDir.Replace(FolderPathInput.Text, "")}");
+                                }
+                                catch (Exception e)
+                                {
+                                    ShowMessage($"Renaming directory {f.DirectoryName.Replace(FolderPathInput.Text, "")} failed.", LogImage.Error, e);
+                                }
+                            }
+
+                            // Rename file
+                            if (fileDir != FolderTrash)
+                            {
+                                string filePath = Toolbox.CombinePathAndFileName(fileDir, f.FileNameNew);
+                                filePath = _NewPathDublicate(filePath, f);
+                                if (!filePath.Equals(f.FilePath) && File.Exists(f.FilePath))
+                                {
+                                    File.Move(f.FilePath, filePath);
+                                    ShowMessage($"Renamed {f.FilePath.Replace(FolderPathInput.Text, "")} to: {filePath.Replace(FolderPathInput.Text, "")}");
+                                    Invoke((Action)delegate { FilesMoved.Value++; });
+                                }
                             }
                         }
                         else
                         {
-                            File.Move(f.FilePath, newPath);
-                            msg = $"Moved {f.FilePath.Replace(FolderPathInput.Text, "")} to: {newPath.Replace(FolderPathOutput.Text, "")}";
+                            // Check if new directory exists
+                            System.IO.Directory.CreateDirectory(f.DirectoryNameNew);
+
+                            // Move file to new directory
+                            File.Move(f.FilePath, f.FilePathNew);
+                            ShowMessage($"Moved {f.FilePath.Replace(FolderPathInput.Text, "")} to: {f.FilePathNew.Replace(FolderPathOutput.Text, "")}");
+                            Invoke((Action)delegate { FilesMoved.Value++; });
                         }
-                        FilesMoved.Value++;
                     }
 
                     // canceling
@@ -690,7 +605,7 @@ namespace ImageOrganizerWinForms.ViewModel
                     }
 
                     // progress
-                    _WorkerUi.ReportProgress((int)((double)(_FileCounter) / FilesInFolder.Count * 100), msg);
+                    _WorkerUi.ReportProgress((int)((double)(_FileCounter) / FilesInFolder.Count * 100));
                 }
             }
 
@@ -702,11 +617,60 @@ namespace ImageOrganizerWinForms.ViewModel
                 _DeleteEmptyDirectories(FolderPathInput.Text);
             }
 
+            foreach (var item in OtherFilesInFolder)
+            {
+                ShowMessage($"Other file in folder : {item.FilePath}");
+            }
+
+            ShowMessage($"Other files in folders: {_OtherFilesCounter}");
             ShowMessage($"Files moved: {FilesMoved.Value}");
             ShowMessage($"Files deleted: {_CountFilesDeleted}");
             ShowMessage($"Folders deleted: {_CountFoldersDeleted}");
         }
+        private string _NewPathDublicate(string filePath, FileData f)
+        {
+            string newPath = filePath;
+            string newName = filePath.Replace(f.FileType.ToLower(), "");
+            int count = 0;
+            if (filePath == f.FilePath.Replace(f.FileType, f.FileType.ToLower()))
+            {
+                return filePath;
+            }
+            while (File.Exists(newPath))
+            {
+                FileInfo fi = new FileInfo(filePath);
+                if (f.FileSize == fi.Length)
+                {
+                    // -> same size? delete in input folder
+                    _DeleteFile(f);
+                    _CountFilesDeleted++;
+                    break;
+                }
+                else
+                {
+                    // -> same Name? append "_2"
+                    newPath = newName + "_" + ++count + f.FileType;
+                }
+            }
+            return newPath;
+        }
 
+        private void _RenameFileData(ref FileData f, Dictionary<string, string> directoriesRenamed)
+        {
+            foreach (var item in directoriesRenamed)
+            {
+                if (f.DirectoryName.Contains(item.Key))
+                {
+                    f.DirectoryName = f.DirectoryName.Replace(item.Key, item.Value);
+                    f.DirectoryNameNew = f.DirectoryNameNew.Replace(item.Key, item.Value);
+                    f.DirectoryNameOld = f.DirectoryNameOld.Replace(item.Key, item.Value);
+
+                    f.FilePath = f.FilePath.Replace(item.Key, item.Value);
+                    f.FilePathNew = f.FilePathNew.Replace(item.Key, item.Value);
+                    f.FilePathOld = f.FilePathOld.Replace(item.Key, item.Value);
+                }
+            }
+        }
         private void _DeleteFile(FileData f)
         {
             if (UseTrashFolder.Checked)
@@ -830,7 +794,7 @@ namespace ImageOrganizerWinForms.ViewModel
             this.Invoke((Action)delegate
             {
                 Progress.Value = Math.Min(100, e.ProgressPercentage);
-                if (e.UserState != null)
+                if (e.UserState != null && !string.IsNullOrEmpty(e.UserState.ToString()))
                 {
                     ShowMessage(e.UserState.ToString());
                 }
@@ -915,10 +879,6 @@ namespace ImageOrganizerWinForms.ViewModel
                 Logger.TopIndex = Logger.Items.Count - 1;
             });
         }
-        private void _ShowMessage(LogEntry entry)
-        {
-            ShowMessage(entry.Message, entry.ImageSource);
-        }
 
         #endregion
 
@@ -936,6 +896,5 @@ namespace ImageOrganizerWinForms.ViewModel
         #endregion
 
         #endregion
-
     }
 }
