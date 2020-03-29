@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace ImageOrganizerWinForms.ViewModel
 {
@@ -41,6 +42,7 @@ namespace ImageOrganizerWinForms.ViewModel
         //private int FilesMoved.Value = 0;
         private int _CountFilesDeleted = 0;
         private int _CountFoldersDeleted = 0;
+        Stopwatch TimeLeftToMove = new Stopwatch();
 
         //we init this once so that if the function is repeatedly called
         //it isn't stressing the garbage man
@@ -258,6 +260,7 @@ namespace ImageOrganizerWinForms.ViewModel
             _FileCounter = 0;
             OtherFilesInFolder = new BindingList<FileData>();
             _OtherFilesCounter = 0;
+            TimeLeftToMove.Start();
             Invoke((Action)delegate { FilesToMove.Value = 0; });
 
             // find all projects in default folder and subfolders
@@ -273,75 +276,85 @@ namespace ImageOrganizerWinForms.ViewModel
                     break;
                 }
 
-                // Create file data
                 FileData f = new FileData();
                 f.FilePath = filePaths[i];
                 f.FileType = Path.GetExtension(f.FilePath);
                 f.FileName = Path.GetFileName(f.FilePath);
 
                 // progress
-                _WorkerUi.ReportProgress((int)((double)(i) / filePaths.Length * 100), $"Analyzing {f.FilePath.Replace(FolderPathInput.Text,"")}");
+                _WorkerUi.ReportProgress((int)((double)(i) / filePaths.Length * 100), $"Analyzing {f.FilePath.Replace(FolderPathInput.Text, "")}");
 
-                // File infos
-                FileInfo fi = new FileInfo(f.FilePath);
-                f.DirectoryName = fi.DirectoryName;
-                f.FileSize = fi.Length;
-                f.DateTaken = fi.LastWriteTime; //fi.CreationTime;
-                f.CameraType = "Unknown";
-
-                // Get image meta data
-                if (_IsImage(f) || _IsVideo(f))
+                // Create file data
+                try
                 {
-                    if (_IsImage(f))
+                    // File infos
+                    FileInfo fi = new FileInfo(f.FilePath);
+                    f.DirectoryName = fi.DirectoryName;
+                    f.FileSize = fi.Length;
+                    f.DateTaken = fi.LastWriteTime; //fi.CreationTime;
+                    f.CameraType = "Unknown";
+
+                    // Get image meta data
+                    if (_IsImage(f) || _IsVideo(f))
                     {
-                        using (FileStream fs = new FileStream(f.FilePath, FileMode.Open, FileAccess.Read))
-                        using (Image myImage = Image.FromStream(fs, false, false))
+                        if (_IsImage(f))
                         {
-                            PropertyItem propItem;
-                            string dateTaken = string.Empty;
-                            DateTime dateTakenFormat = new DateTime();
-                            try
+                            using (FileStream fs = new FileStream(f.FilePath, FileMode.Open, FileAccess.Read))
+                            using (Image myImage = Image.FromStream(fs, false, false))
                             {
-                                propItem = myImage.GetPropertyItem(0x9003);//36867); //PropertyTagExifDTOrig
-                                dateTaken = r.Replace(Encoding.UTF8.GetString(propItem.Value), "-", 2);
-                                dateTakenFormat = DateTime.Parse(dateTaken);
-                            }
-                            catch
-                            {
-                            }
-                            if (dateTaken != null && dateTakenFormat.Year>1970) f.DateTaken = dateTakenFormat;
+                                PropertyItem propItem;
+                                string dateTaken = string.Empty;
+                                DateTime dateTakenFormat = new DateTime();
+                                try
+                                {
+                                    propItem = myImage.GetPropertyItem(0x9003);//36867); //PropertyTagExifDTOrig
+                                    dateTaken = r.Replace(Encoding.UTF8.GetString(propItem.Value), "-", 2);
+                                    dateTakenFormat = DateTime.Parse(dateTaken);
+                                }
+                                catch
+                                {
+                                }
+                                if (dateTaken != null && dateTakenFormat.Year > 1970) f.DateTaken = dateTakenFormat;
 
-                            ASCIIEncoding encodings = new ASCIIEncoding();
-                            string cameraType = string.Empty;
-                            try
-                            {
-                                propItem = myImage.GetPropertyItem(0x0110);//PropertyTagEquipModel;
-                                cameraType = encodings.GetString(propItem.Value);
-                                //cameraType = cameraType.Substring(0,cameraType.Length);
+                                ASCIIEncoding encodings = new ASCIIEncoding();
+                                string cameraType = string.Empty;
+                                try
+                                {
+                                    propItem = myImage.GetPropertyItem(0x0110);//PropertyTagEquipModel;
+                                    cameraType = encodings.GetString(propItem.Value);
+                                    //cameraType = cameraType.Substring(0,cameraType.Length);
+                                }
+                                catch
+                                {
+                                }
+                                if (!string.IsNullOrEmpty(cameraType)) f.CameraType = cameraType;
                             }
-                            catch
-                            {
-                            }
-                            if (!string.IsNullOrEmpty(cameraType)) f.CameraType = cameraType;
                         }
+
+                        // Create new name
+                        _GetNewFileName(ref f);
+
+                        if (!f.FilePath.Equals(f.FilePathNew))
+                        {
+                            Invoke((Action)delegate { FilesToMove.Value++; });
+
+                            ShowMessage($"New name {f.FilePathNew.Replace(FolderPathOutput.Text, "")}");
+
+                            // Add file to collection
+                            FilesInFolder.Add(f);
+                        }
+                        _FileCounter++;
                     }
-
-                    if (!f.FilePath.Equals(f.FilePathNew)) Invoke((Action)delegate { FilesToMove.Value++; });
-
-                    // Create new name
-                    _GetNewFileName(ref f);
-                    
-                    ShowMessage($"New name {f.FilePathNew.Replace(FolderPathOutput.Text, "")}");
-
-                    // Add file to collection
-                    _FileCounter++;
-                    FilesInFolder.Add(f);
+                    else // other files
+                    {
+                        // Add file to collection
+                        _OtherFilesCounter++;
+                        OtherFilesInFolder.Add(f);
+                    }
                 }
-                else // other files
+                catch (Exception e)
                 {
-                    // Add file to collection
-                    _OtherFilesCounter++;
-                    OtherFilesInFolder.Add(f);
+                    ShowMessage($"File access failed. {f.FilePath.Replace(FolderPathInput.Text,"")}", LogImage.Error, e);
                 }
             }
             FilesInFolder.RaiseListChangedEvents = true;
@@ -517,6 +530,7 @@ namespace ImageOrganizerWinForms.ViewModel
             {
                 _DoWorkAnalyzeFolder(sender, wEvent);
             }
+            TimeLeftToMove.Restart();
             _FileCounter = 0;
             _CountFilesDeleted = 0;
             Invoke((Action)delegate { FilesMoved.Value = 0; });
@@ -639,6 +653,10 @@ namespace ImageOrganizerWinForms.ViewModel
             while (File.Exists(newPath))
             {
                 FileInfo fi = new FileInfo(filePath);
+                //if (newPath == f.FilePath)
+                //{
+                //    return filePath;
+                //}
                 if (f.FileSize == fi.Length)
                 {
                     // -> same size? delete in input folder
@@ -798,6 +816,13 @@ namespace ImageOrganizerWinForms.ViewModel
                 {
                     ShowMessage(e.UserState.ToString());
                 }
+
+                if (e.ProgressPercentage>0)
+                {
+                    double h = Math.Truncate(TimeLeftToMove.Elapsed.TotalHours * (100 / e.ProgressPercentage - 1) *100)/100;
+                    double s = Math.Truncate(TimeLeftToMove.Elapsed.TotalMinutes * (100 / e.ProgressPercentage - 1) * 100) / 100;
+                    TimeLeft.Text = $"Time left: {h.ToString()}h {s.ToString()}min";
+                }
             });
         }
 
@@ -822,9 +847,11 @@ namespace ImageOrganizerWinForms.ViewModel
             }
             catch (System.Reflection.TargetInvocationException exp)
             {
-                ShowMessage("Error: ", LogImage.Error, exp.InnerException);
+                ShowMessage("Error: ", LogImage.Error, exp);
+                ShowMessage("Inner exception: ", LogImage.Error, exp.InnerException);
             }
 
+            TimeLeftToMove.Stop();
             if (sender == _WorkerUi) _WorkerUi = null;
         }
 

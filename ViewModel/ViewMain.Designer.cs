@@ -63,6 +63,9 @@
             this.OpenSettings = new System.Windows.Forms.Button();
             this.Logger = new System.Windows.Forms.ListBox();
             this.FilesInFolderDataGrid = new System.Windows.Forms.DataGridView();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.TimeLeft = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -276,6 +279,9 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.TimeLeft);
+            this.groupBox3.Controls.Add(this.label8);
+            this.groupBox3.Controls.Add(this.label7);
             this.groupBox3.Controls.Add(this.FilesToMove);
             this.groupBox3.Controls.Add(this.FilesMoved);
             this.groupBox3.Controls.Add(this.UseTrashFolder);
@@ -429,6 +435,33 @@
             this.FilesInFolderDataGrid.TabIndex = 11;
             this.FilesInFolderDataGrid.Visible = false;
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 91);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(69, 13);
+            this.label7.TabIndex = 18;
+            this.label7.Text = "Files to move";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(89, 91);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(63, 13);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "Files moved";
+            // 
+            // TimeLeft
+            // 
+            this.TimeLeft.AutoSize = true;
+            this.TimeLeft.Location = new System.Drawing.Point(8, 66);
+            this.TimeLeft.Name = "TimeLeft";
+            this.TimeLeft.Size = new System.Drawing.Size(30, 13);
+            this.TimeLeft.TabIndex = 20;
+            this.TimeLeft.Text = "Time";
+            // 
             // ViewModelMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -507,6 +540,9 @@
         private System.Windows.Forms.NumericUpDown FilesToMove;
         private System.Windows.Forms.NumericUpDown FilesMoved;
         private System.Windows.Forms.DataGridView FilesInFolderDataGrid;
+        private System.Windows.Forms.Label TimeLeft;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label7;
     }
 }
 
