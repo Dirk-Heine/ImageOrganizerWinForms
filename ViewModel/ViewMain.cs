@@ -820,7 +820,7 @@ namespace ImageOrganizerWinForms.ViewModel
                 if (e.ProgressPercentage>0)
                 {
                     double h = Math.Truncate(TimeLeftToMove.Elapsed.TotalHours * (100 / e.ProgressPercentage - 1) *100)/100;
-                    double s = Math.Truncate(TimeLeftToMove.Elapsed.TotalMinutes * (100 / e.ProgressPercentage - 1) * 100) / 100;
+                    double s = Math.Truncate((TimeLeftToMove.Elapsed.TotalMinutes - h*60) * (100 / e.ProgressPercentage - 1) * 100) / 100;
                     TimeLeft.Text = $"Time left: {h.ToString()}h {s.ToString()}min";
                 }
             });
