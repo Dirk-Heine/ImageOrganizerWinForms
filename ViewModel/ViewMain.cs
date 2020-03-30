@@ -43,6 +43,7 @@ namespace ImageOrganizerWinForms.ViewModel
         private int _CountFilesDeleted = 0;
         private int _CountFoldersDeleted = 0;
         Stopwatch TimeLeftToMove = new Stopwatch();
+        Dictionary<string, string> DirectoriesRenamed = new Dictionary<string, string>();
 
         //we init this once so that if the function is repeatedly called
         //it isn't stressing the garbage man
@@ -257,18 +258,20 @@ namespace ImageOrganizerWinForms.ViewModel
         private void _DoWorkAnalyzeFolder(object sender, DoWorkEventArgs wEvent)
         {
             FilesInFolder = new BindingList<FileData>();
-            _FileCounter = 0;
             OtherFilesInFolder = new BindingList<FileData>();
+            _FileCounter = 0;
             _OtherFilesCounter = 0;
             TimeLeftToMove.Start();
             Invoke((Action)delegate { FilesToMove.Value = 0; });
 
-            // find all projects in default folder and subfolders
-            ShowMessage($"Getting all file names in \"{FolderPathInput.Text}\"");
-            SearchOption searchOption = AnalyzeWithSubFolders.Checked ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-            string[] filePaths = System.IO.Directory.GetFiles(FolderPathInput.Text, "*.*", searchOption);
+            string[] filePaths = _GetAllInputFiles();
             for (int i = 0; i < filePaths.Length; i++)
             {
+                // Analyze
+                FileData f = new FileData();
+                f.FilePath = filePaths[i];
+                _AnalyzeFile(ref f);
+
                 // canceling
                 if (_WorkerUi.CancellationPending)
                 {
@@ -276,90 +279,99 @@ namespace ImageOrganizerWinForms.ViewModel
                     break;
                 }
 
-                FileData f = new FileData();
-                f.FilePath = filePaths[i];
-                f.FileType = Path.GetExtension(f.FilePath);
-                f.FileName = Path.GetFileName(f.FilePath);
-
                 // progress
                 _WorkerUi.ReportProgress((int)((double)(i) / filePaths.Length * 100), $"Analyzing {f.FilePath.Replace(FolderPathInput.Text, "")}");
-
-                // Create file data
-                try
-                {
-                    // File infos
-                    FileInfo fi = new FileInfo(f.FilePath);
-                    f.DirectoryName = fi.DirectoryName;
-                    f.FileSize = fi.Length;
-                    f.DateTaken = fi.LastWriteTime; //fi.CreationTime;
-                    f.CameraType = "Unknown";
-
-                    // Get image meta data
-                    if (_IsImage(f) || _IsVideo(f))
-                    {
-                        if (_IsImage(f))
-                        {
-                            using (FileStream fs = new FileStream(f.FilePath, FileMode.Open, FileAccess.Read))
-                            using (Image myImage = Image.FromStream(fs, false, false))
-                            {
-                                PropertyItem propItem;
-                                string dateTaken = string.Empty;
-                                DateTime dateTakenFormat = new DateTime();
-                                try
-                                {
-                                    propItem = myImage.GetPropertyItem(0x9003);//36867); //PropertyTagExifDTOrig
-                                    dateTaken = r.Replace(Encoding.UTF8.GetString(propItem.Value), "-", 2);
-                                    dateTakenFormat = DateTime.Parse(dateTaken);
-                                }
-                                catch
-                                {
-                                }
-                                if (dateTaken != null && dateTakenFormat.Year > 1970) f.DateTaken = dateTakenFormat;
-
-                                ASCIIEncoding encodings = new ASCIIEncoding();
-                                string cameraType = string.Empty;
-                                try
-                                {
-                                    propItem = myImage.GetPropertyItem(0x0110);//PropertyTagEquipModel;
-                                    cameraType = encodings.GetString(propItem.Value);
-                                    //cameraType = cameraType.Substring(0,cameraType.Length);
-                                }
-                                catch
-                                {
-                                }
-                                if (!string.IsNullOrEmpty(cameraType)) f.CameraType = cameraType;
-                            }
-                        }
-
-                        // Create new name
-                        _GetNewFileName(ref f);
-
-                        if (!f.FilePath.Equals(f.FilePathNew))
-                        {
-                            Invoke((Action)delegate { FilesToMove.Value++; });
-
-                            ShowMessage($"New name {f.FilePathNew.Replace(FolderPathOutput.Text, "")}");
-
-                            // Add file to collection
-                            FilesInFolder.Add(f);
-                        }
-                        _FileCounter++;
-                    }
-                    else // other files
-                    {
-                        // Add file to collection
-                        _OtherFilesCounter++;
-                        OtherFilesInFolder.Add(f);
-                    }
-                }
-                catch (Exception e)
-                {
-                    ShowMessage($"File access failed. {f.FilePath.Replace(FolderPathInput.Text,"")}", LogImage.Error, e);
-                }
             }
-            FilesInFolder.RaiseListChangedEvents = true;
             ShowMessage($"Valid files found: {_FileCounter}");
             ShowMessage($"Files to move: {FilesToMove.Value}");
+        }
+        private bool _AnalyzeFile(ref FileData f)
+        {
+            bool retVal = false;
+            f.FileType = Path.GetExtension(f.FilePath);
+            f.FileName = Path.GetFileName(f.FilePath);
+
+            // Create file data
+            try
+            {
+                // File infos
+                FileInfo fi = new FileInfo(f.FilePath);
+                f.DirectoryName = fi.DirectoryName;
+                f.FileSize = fi.Length;
+                f.DateTaken = fi.LastWriteTime; //fi.CreationTime;
+                f.CameraType = "Unknown";
+
+                // Get image meta data
+                if (_IsImage(f) || _IsVideo(f))
+                {
+                    if (_IsImage(f))
+                    {
+                        using (FileStream fs = new FileStream(f.FilePath, FileMode.Open, FileAccess.Read))
+                        using (Image myImage = Image.FromStream(fs, false, false))
+                        {
+                            PropertyItem propItem;
+                            string dateTaken = string.Empty;
+                            DateTime dateTakenFormat = new DateTime();
+                            try
+                            {
+                                propItem = myImage.GetPropertyItem(0x9003);//36867); //PropertyTagExifDTOrig
+                                dateTaken = r.Replace(Encoding.UTF8.GetString(propItem.Value), "-", 2);
+                                dateTakenFormat = DateTime.Parse(dateTaken);
+                            }
+                            catch
+                            {
+                            }
+                            if (dateTaken != null && dateTakenFormat.Year > 1970) f.DateTaken = dateTakenFormat;
+
+                            ASCIIEncoding encodings = new ASCIIEncoding();
+                            string cameraType = string.Empty;
+                            try
+                            {
+                                propItem = myImage.GetPropertyItem(0x0110);//PropertyTagEquipModel;
+                                cameraType = encodings.GetString(propItem.Value);
+                                //cameraType = cameraType.Substring(0,cameraType.Length);
+                            }
+                            catch
+                            {
+                            }
+                            if (!string.IsNullOrEmpty(cameraType)) f.CameraType = cameraType;
+                        }
+                    }
+
+                    // Create new name
+                    _GetNewFileName(ref f);
+
+                    if (!f.FilePath.Equals(f.FilePathNew))
+                    {
+                        Invoke((Action)delegate { FilesToMove.Value++; });
+
+                        ShowMessage($"New name {f.FilePathNew.Replace(FolderPathOutput.Text, "")}");
+
+                        // Add file to collection
+                        FilesInFolder.Add(f);
+                        retVal = true;
+                    }
+                    _FileCounter++;
+                }
+                else // other files
+                {
+                    // Add file to collection
+                    _OtherFilesCounter++;
+                    OtherFilesInFolder.Add(f);
+                }
+            }
+            catch (Exception e)
+            {
+                ShowMessage($"File access failed. {f.FilePath.Replace(FolderPathInput.Text, "")}", LogImage.Error, e);
+            }
+            return retVal;
+        }
+        private string[] _GetAllInputFiles()
+        {
+            // find all projects in default folder and subfolders
+            ShowMessage($"Getting all file names in \"{FolderPathInput.Text}\"");
+            SearchOption searchOption = AnalyzeWithSubFolders.Checked ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
+            return System.IO.Directory.GetFiles(FolderPathInput.Text, "*.*", searchOption);
         }
 
         private bool _IsImage(FileData f)
@@ -526,21 +538,40 @@ namespace ImageOrganizerWinForms.ViewModel
         }
         private void _DoWorkOrganizeFolder(object sender, DoWorkEventArgs wEvent)
         {
-            if (FilesInFolder == null)
-            {
-                _DoWorkAnalyzeFolder(sender, wEvent);
-            }
-            TimeLeftToMove.Restart();
             _FileCounter = 0;
             _CountFilesDeleted = 0;
-            Invoke((Action)delegate { FilesMoved.Value = 0; });
             _CountFoldersDeleted = 0;
-
-            var directoriesRenamed = new Dictionary<string, string>();
+            TimeLeftToMove.Start();
+            Invoke((Action)delegate { FilesMoved.Value = 0; });
 
             if (FilesInFolder == null)
             {
-                ShowMessage("No files to organize.");
+                FilesInFolder = new BindingList<FileData>();
+                OtherFilesInFolder = new BindingList<FileData>();
+                string[] filePaths = _GetAllInputFiles();
+                for (int i = 0; i < filePaths.Length; i++)
+                {
+                    // canceling
+                    if (_WorkerUi.CancellationPending)
+                    {
+                        wEvent.Cancel = true;
+                        break;
+                    }
+
+                    // new file
+                    FileData f = new FileData();
+                    f.FilePath = filePaths[i];
+                    _RenameFileData(ref f, DirectoriesRenamed);
+
+                    // progress
+                    _WorkerUi.ReportProgress((int)((double)(i) / filePaths.Length * 100), $"Analyzing {f.FilePath.Replace(FolderPathInput.Text, "")}");
+
+                    // Analyze
+                    bool move = _AnalyzeFile(ref f);
+
+                    // Organize
+                    if (move) _OrganizeFile(f);
+                }
             }
             else
             {
@@ -550,66 +581,8 @@ namespace ImageOrganizerWinForms.ViewModel
                     FileData f = FilesInFolder[i];
                     _FileCounter++;
 
-                    // rename directory if necessary
-                    _RenameFileData(ref f, directoriesRenamed);
-
-                    // No action needed
-                    if (f.FilePathNew.Equals(f.FilePath))
-                    {
-                        continue;
-                    }
-
-                    f.FilePathNew = _NewPathDublicate(f.FilePathNew, f);
-                    f.FileNameNew = f.FilePathNew.Substring(f.FilePathNew.LastIndexOf(f.FileNameNew.Replace(f.FileType, "")));
-                    
-                    if (File.Exists(f.FilePath))
-                    {
-                        if (CheckedJustRename.Checked)
-                        {
-                            // Rename directory 
-                            // => save renamed directories in dict
-                            // => TODO: recognize sub folder in folder structure!
-                            string fileDir = f.DirectoryName.Replace(f.DirectoryNameOld, f.DirectoryNameNew);
-                            if (f.DirectoryName.StartsWith(f.DirectoryNameOld) && f.DirectoryNameNew != f.DirectoryNameOld)// && !Directory.Exists(f.DirectoryNameNew))
-                            {
-                                try
-                                {
-                                    Directory.Move(f.DirectoryNameOld, f.DirectoryNameNew);
-                                    directoriesRenamed.Add(f.DirectoryNameOld, f.DirectoryNameNew);
-                                    // rename directory in file data if necessary
-                                    _RenameFileData(ref f, directoriesRenamed);
-                                    ShowMessage($"Renamed directory {f.DirectoryName.Replace(FolderPathInput.Text, "")} to: {fileDir.Replace(FolderPathInput.Text, "")}");
-                                }
-                                catch (Exception e)
-                                {
-                                    ShowMessage($"Renaming directory {f.DirectoryName.Replace(FolderPathInput.Text, "")} failed.", LogImage.Error, e);
-                                }
-                            }
-
-                            // Rename file
-                            if (fileDir != FolderTrash)
-                            {
-                                string filePath = Toolbox.CombinePathAndFileName(fileDir, f.FileNameNew);
-                                filePath = _NewPathDublicate(filePath, f);
-                                if (!filePath.Equals(f.FilePath) && File.Exists(f.FilePath))
-                                {
-                                    File.Move(f.FilePath, filePath);
-                                    ShowMessage($"Renamed {f.FilePath.Replace(FolderPathInput.Text, "")} to: {filePath.Replace(FolderPathInput.Text, "")}");
-                                    Invoke((Action)delegate { FilesMoved.Value++; });
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // Check if new directory exists
-                            System.IO.Directory.CreateDirectory(f.DirectoryNameNew);
-
-                            // Move file to new directory
-                            File.Move(f.FilePath, f.FilePathNew);
-                            ShowMessage($"Moved {f.FilePath.Replace(FolderPathInput.Text, "")} to: {f.FilePathNew.Replace(FolderPathOutput.Text, "")}");
-                            Invoke((Action)delegate { FilesMoved.Value++; });
-                        }
-                    }
+                    // Organize
+                    _OrganizeFile(f);
 
                     // canceling
                     if (_WorkerUi.CancellationPending)
@@ -626,8 +599,9 @@ namespace ImageOrganizerWinForms.ViewModel
             FilesInFolder = null;
 
             // Delete empty folders
-            if (DeleteEmptyFolders.Checked)
+            if (DeleteEmptyFolders.Checked && !_WorkerUi.CancellationPending)
             {
+                ShowMessage($"Deleting empty directories.");
                 _DeleteEmptyDirectories(FolderPathInput.Text);
             }
 
@@ -640,6 +614,73 @@ namespace ImageOrganizerWinForms.ViewModel
             ShowMessage($"Files moved: {FilesMoved.Value}");
             ShowMessage($"Files deleted: {_CountFilesDeleted}");
             ShowMessage($"Folders deleted: {_CountFoldersDeleted}");
+        }
+        private void _OrganizeFile(FileData f)
+        {
+
+            // rename directory if necessary
+            _RenameFileData(ref f, DirectoriesRenamed);
+
+            // No action needed
+            if (f.FilePathNew.Equals(f.FilePath))
+            {
+                ShowMessage($"No action necessary {f.FilePath.Replace(FolderPathInput.Text, "")}");
+                return;
+            }
+
+            f.FilePathNew = _NewPathDublicate(f.FilePathNew, f);
+            int startIndexFileName = f.FilePathNew.LastIndexOf(ModelSettings.FolderSeparator) + 1;
+            //int startIndexFileName = f.FilePathNew.LastIndexOf(f.FileNameNew.Replace(f.FileType, "").Replace(f.FileType.ToLower(), ""));
+            f.FileNameNew = f.FilePathNew.Substring(startIndexFileName);
+
+            if (File.Exists(f.FilePath))
+            {
+                if (CheckedJustRename.Checked)
+                {
+                    // Rename directory 
+                    // => save renamed directories in dict
+                    // => TODO: recognize sub folder in folder structure!
+                    string fileDir = f.DirectoryName.Replace(f.DirectoryNameOld, f.DirectoryNameNew);
+                    if (f.DirectoryName.StartsWith(f.DirectoryNameOld) && f.DirectoryNameNew != f.DirectoryNameOld)// && !Directory.Exists(f.DirectoryNameNew))
+                    {
+                        try
+                        {
+                            Directory.Move(f.DirectoryNameOld, f.DirectoryNameNew);
+                            DirectoriesRenamed.Add(f.DirectoryNameOld, f.DirectoryNameNew);
+                            // rename directory in file data if necessary
+                            _RenameFileData(ref f, DirectoriesRenamed);
+                            ShowMessage($"Renamed directory {f.DirectoryName.Replace(FolderPathInput.Text, "")} to: {fileDir.Replace(FolderPathInput.Text, "")}");
+                        }
+                        catch (Exception e)
+                        {
+                            ShowMessage($"Renaming directory {f.DirectoryName.Replace(FolderPathInput.Text, "")} failed.", LogImage.Error, e);
+                        }
+                    }
+
+                    // Rename file
+                    if (fileDir != FolderTrash)
+                    {
+                        string filePath = Toolbox.CombinePathAndFileName(fileDir, f.FileNameNew);
+                        filePath = _NewPathDublicate(filePath, f);
+                        if (!filePath.Equals(f.FilePath) && File.Exists(f.FilePath))
+                        {
+                            File.Move(f.FilePath, filePath);
+                            ShowMessage($"Renamed {f.FilePath.Replace(FolderPathInput.Text, "")} to: {filePath.Replace(FolderPathInput.Text, "")}");
+                            Invoke((Action)delegate { FilesMoved.Value++; });
+                        }
+                    }
+                }
+                else
+                {
+                    // Check if new directory exists
+                    System.IO.Directory.CreateDirectory(f.DirectoryNameNew);
+
+                    // Move file to new directory
+                    File.Move(f.FilePath, f.FilePathNew);
+                    ShowMessage($"Moved {f.FilePath.Replace(FolderPathInput.Text, "")} to: {f.FilePathNew.Replace(FolderPathOutput.Text, "")}");
+                    Invoke((Action)delegate { FilesMoved.Value++; });
+                }
+            }
         }
         private string _NewPathDublicate(string filePath, FileData f)
         {
@@ -677,7 +718,7 @@ namespace ImageOrganizerWinForms.ViewModel
         {
             foreach (var item in directoriesRenamed)
             {
-                if (f.DirectoryName.Contains(item.Key))
+                if (f.DirectoryName != null && f.DirectoryName.Contains(item.Key))
                 {
                     f.DirectoryName = f.DirectoryName.Replace(item.Key, item.Value);
                     f.DirectoryNameNew = f.DirectoryNameNew.Replace(item.Key, item.Value);
@@ -686,6 +727,10 @@ namespace ImageOrganizerWinForms.ViewModel
                     f.FilePath = f.FilePath.Replace(item.Key, item.Value);
                     f.FilePathNew = f.FilePathNew.Replace(item.Key, item.Value);
                     f.FilePathOld = f.FilePathOld.Replace(item.Key, item.Value);
+                }
+                else if (f.DirectoryName == null && f.FilePath.Contains(item.Key))
+                {
+                    f.FilePath = f.FilePath.Replace(item.Key, item.Value);
                 }
             }
         }
@@ -817,11 +862,17 @@ namespace ImageOrganizerWinForms.ViewModel
                     ShowMessage(e.UserState.ToString());
                 }
 
-                if (e.ProgressPercentage>0)
+                if (e.ProgressPercentage > 0)
                 {
-                    double h = Math.Truncate(TimeLeftToMove.Elapsed.TotalHours * (100 / e.ProgressPercentage - 1) *100)/100;
-                    double s = Math.Truncate((TimeLeftToMove.Elapsed.TotalMinutes - h*60) * (100 / e.ProgressPercentage - 1) * 100) / 100;
-                    TimeLeft.Text = $"Time left: {h.ToString()}h {s.ToString()}min";
+                    double p = 100 / e.ProgressPercentage - 1;
+                    double rawH = TimeLeftToMove.Elapsed.TotalHours * p;
+                    double rawM = (TimeLeftToMove.Elapsed.TotalMinutes) * p;
+                    double overM = Math.Truncate(rawM / 60);
+                    rawM -= overM;
+                    rawH += overM;
+                    double h = Math.Truncate(rawH);// Convert.ToDouble(Convert.ToInt64(rawH));
+                    double m = Math.Truncate(rawM * 100) / 100;
+                    TimeLeft.Text = $"Time left: {h.ToString()}h {m.ToString()}min";
                 }
             });
         }
@@ -852,6 +903,9 @@ namespace ImageOrganizerWinForms.ViewModel
             }
 
             TimeLeftToMove.Stop();
+            double h = Math.Truncate(TimeLeftToMove.Elapsed.TotalHours * 100) / 100;
+            double s = Math.Truncate((TimeLeftToMove.Elapsed.TotalMinutes - h * 60)  * 100) / 100;
+            TimeLeft.Text = $"Time elapsed: {h.ToString()}h {s.ToString()}min";
             if (sender == _WorkerUi) _WorkerUi = null;
         }
 
