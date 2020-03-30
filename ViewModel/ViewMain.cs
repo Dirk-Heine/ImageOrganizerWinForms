@@ -21,6 +21,80 @@ using System.Diagnostics;
 
 namespace ImageOrganizerWinForms.ViewModel
 {
+    public class Smoothing
+    {
+        double[] _Buffer;
+        int _Size = 0; // array size
+        int _Num = 0; // number of current buffer elements
+        int _Index = 0; // current buffer element
+        double _Sum = 0; // sum of buffer
+        public double Median = 0;
+        public Smoothing(int size = 10)
+        {
+            if (size <= 0) throw new Exception($"Buffer size must be positive: {size}");
+            _Size = size;
+            _Buffer = new double[size];
+        }
+        public void Add(double d)
+        {
+            // ring buffer
+            _Sum -= _Buffer[_Index];
+            _Buffer[_Index] = d;
+            _Sum += d;
+
+            // increase indices
+            _Num = Math.Min(_Size, _Num + 1);
+            _Index = (_Index + 1) % _Size;
+
+            // calculate median
+            Median = _Num == 0 ? 0 : _Sum / _Num;
+            return;
+        }
+        public void Clear()
+        {
+            _Buffer = new double[_Size];
+            _Num = 0;
+            _Index = 0;
+        }
+    }
+    public class FileData
+    {
+        public string FileName { get { return _FileName; } set { _FileName = value; } }
+        private string _FileName;
+        public string FilePath { get { return _FilePath; } set { _FilePath = value; } }
+        private string _FilePath;
+        public string DirectoryName { get { return _DirectoryName; } set { _DirectoryName = value; } }
+        private string _DirectoryName;
+        public string FileNameNew { get { return _FileNameNew; } set { _FileNameNew = value; } }
+        private string _FileNameNew;
+        public string FilePathNew { get { return _FilePathNew; } set { _FilePathNew = value; } }
+        private string _FilePathNew;
+        public string DirectoryNameNew { get { return _DirectoryNameNew; } set { _DirectoryNameNew = value; } }
+        private string _DirectoryNameNew;
+        public string FileNameOld { get { return _FileNameOld; } set { _FileNameOld = value; } }
+        private string _FileNameOld;
+        public string FilePathOld { get { return _FilePathOld; } set { _FilePathOld = value; } }
+        private string _FilePathOld;
+        public string DirectoryNameOld { get { return _DirectoryNameOld; } set { _DirectoryNameOld = value; } }
+        private string _DirectoryNameOld;
+        public string FileType { get { return _FileType; } set { _FileType = value; } }
+        private string _FileType;
+        public long FileSize { get { return _FileSize; } set { _FileSize = value; } }
+        private long _FileSize;
+        public string CameraType { get { return _CameraType; } set { _CameraType = value; } }
+        private string _CameraType;
+        public DateTime DateTaken { get { return _DateTaken; } set { _DateTaken = value; } }
+        private DateTime _DateTaken;
+        public string Tag { get { return _Tag; } set { _Tag = value; } }
+        private string _Tag;
+
+        public FileData(string fileName = "", string fileType = "", string filePath = "")
+        {
+            FileName = fileName;
+            FileType = fileType;
+            FilePath = filePath;
+        }
+    }
     public partial class ViewModelMain : Form
     {
         #region Syntax-Conventions
@@ -37,12 +111,12 @@ namespace ImageOrganizerWinForms.ViewModel
         #region Properties
         private AbortableBackgroundWorker _WorkerUi;
         private int _FileCounter = 0;
+        private int _FilesToGo = 0;
         private int _OtherFilesCounter = 0;
         //private int FilesToMove.Value = 0;
         //private int FilesMoved.Value = 0;
         private int _CountFilesDeleted = 0;
         private int _CountFoldersDeleted = 0;
-        Stopwatch TimeLeftToMove = new Stopwatch();
         Dictionary<string, string> DirectoriesRenamed = new Dictionary<string, string>();
 
         //we init this once so that if the function is repeatedly called
@@ -53,46 +127,7 @@ namespace ImageOrganizerWinForms.ViewModel
         public BindingList<FileData> OtherFilesInFolder;
         public BindingSource FilesInFolderSource;
         public string FolderTrash { get { return Toolbox.CombinePathAndFileName(FolderPathOutput.Text, "TRASH"); } }
-
-        public class FileData
-        {
-            public string FileName { get { return _FileName; } set { _FileName = value;} }
-            private string _FileName;
-            public string FilePath { get { return _FilePath; } set { _FilePath = value; } }
-            private string _FilePath;
-            public string DirectoryName { get { return _DirectoryName; } set { _DirectoryName = value; } }
-            private string _DirectoryName;
-            public string FileNameNew { get { return _FileNameNew; } set { _FileNameNew = value; } }
-            private string _FileNameNew;
-            public string FilePathNew { get { return _FilePathNew; } set { _FilePathNew = value; } }
-            private string _FilePathNew;
-            public string DirectoryNameNew { get { return _DirectoryNameNew; } set { _DirectoryNameNew = value; } }
-            private string _DirectoryNameNew;
-            public string FileNameOld { get { return _FileNameOld; } set { _FileNameOld = value; } }
-            private string _FileNameOld;
-            public string FilePathOld { get { return _FilePathOld; } set { _FilePathOld = value; } }
-            private string _FilePathOld;
-            public string DirectoryNameOld { get { return _DirectoryNameOld; } set { _DirectoryNameOld = value; } }
-            private string _DirectoryNameOld;
-            public string FileType { get { return _FileType; } set { _FileType = value; } }
-            private string _FileType;
-            public long FileSize { get { return _FileSize; } set { _FileSize = value; } }
-            private long _FileSize;
-            public string CameraType { get { return _CameraType; } set { _CameraType = value; } }
-            private string _CameraType;
-            public DateTime DateTaken { get { return _DateTaken; } set { _DateTaken = value; } }
-            private DateTime _DateTaken;
-            public string Tag { get { return _Tag; } set { _Tag = value; } }
-            private string _Tag;
-
-            public FileData(string fileName = "", string fileType = "", string filePath = "")
-            {
-                FileName = fileName;
-                FileType = fileType;
-                FilePath = filePath;
-            }
-        }
-
+        
         string[] SupportedImages = new string[] {
             ".jpg",
             ".png",
@@ -109,6 +144,10 @@ namespace ImageOrganizerWinForms.ViewModel
             ".mts",
             ".mov"
         };
+
+        Stopwatch TimeWorking = new Stopwatch();
+        Stopwatch TimeOperation = new Stopwatch();
+        Smoothing TimeOpSmooth = new Smoothing(20);
 
         #endregion
 
@@ -261,12 +300,15 @@ namespace ImageOrganizerWinForms.ViewModel
             OtherFilesInFolder = new BindingList<FileData>();
             _FileCounter = 0;
             _OtherFilesCounter = 0;
-            TimeLeftToMove.Start();
+            TimeWorking.Start();
             Invoke((Action)delegate { FilesToMove.Value = 0; });
 
             string[] filePaths = _GetAllInputFiles();
-            for (int i = 0; i < filePaths.Length; i++)
+            _FilesToGo = filePaths.Length;
+            for (int i = 0; i < _FilesToGo; i++)
             {
+                _FileCounter++;
+                
                 // Analyze
                 FileData f = new FileData();
                 f.FilePath = filePaths[i];
@@ -280,7 +322,7 @@ namespace ImageOrganizerWinForms.ViewModel
                 }
 
                 // progress
-                _WorkerUi.ReportProgress((int)((double)(i) / filePaths.Length * 100), $"Analyzing {f.FilePath.Replace(FolderPathInput.Text, "")}");
+                _WorkerUi.ReportProgress((int)((double)(i) / _FilesToGo * 100), $"Analyzing {f.FilePath.Replace(FolderPathInput.Text, "")}");
             }
             ShowMessage($"Valid files found: {_FileCounter}");
             ShowMessage($"Files to move: {FilesToMove.Value}");
@@ -351,7 +393,6 @@ namespace ImageOrganizerWinForms.ViewModel
                         FilesInFolder.Add(f);
                         retVal = true;
                     }
-                    _FileCounter++;
                 }
                 else // other files
                 {
@@ -541,7 +582,7 @@ namespace ImageOrganizerWinForms.ViewModel
             _FileCounter = 0;
             _CountFilesDeleted = 0;
             _CountFoldersDeleted = 0;
-            TimeLeftToMove.Start();
+            TimeWorking.Start();
             Invoke((Action)delegate { FilesMoved.Value = 0; });
 
             if (FilesInFolder == null)
@@ -549,8 +590,11 @@ namespace ImageOrganizerWinForms.ViewModel
                 FilesInFolder = new BindingList<FileData>();
                 OtherFilesInFolder = new BindingList<FileData>();
                 string[] filePaths = _GetAllInputFiles();
-                for (int i = 0; i < filePaths.Length; i++)
+                _FilesToGo = filePaths.Length;
+                for (int i = 0; i < _FilesToGo; i++)
                 {
+                    _FileCounter++;
+
                     // canceling
                     if (_WorkerUi.CancellationPending)
                     {
@@ -564,7 +608,7 @@ namespace ImageOrganizerWinForms.ViewModel
                     _RenameFileData(ref f, DirectoriesRenamed);
 
                     // progress
-                    _WorkerUi.ReportProgress((int)((double)(i) / filePaths.Length * 100), $"Analyzing {f.FilePath.Replace(FolderPathInput.Text, "")}");
+                    _WorkerUi.ReportProgress((int)((double)(i) / _FilesToGo * 100), $"Analyzing {f.FilePath.Replace(FolderPathInput.Text, "")}");
 
                     // Analyze
                     bool move = _AnalyzeFile(ref f);
@@ -576,10 +620,12 @@ namespace ImageOrganizerWinForms.ViewModel
             else
             {
                 //foreach (var f in FilesInFolder)
-                for (int i = 0; i < FilesInFolder.Count; i++)
+                _FilesToGo = FilesInFolder.Count;
+                for (int i = 0; i < _FilesToGo; i++)
                 {
-                    FileData f = FilesInFolder[i];
                     _FileCounter++;
+
+                    FileData f = FilesInFolder[i];
 
                     // Organize
                     _OrganizeFile(f);
@@ -592,7 +638,7 @@ namespace ImageOrganizerWinForms.ViewModel
                     }
 
                     // progress
-                    _WorkerUi.ReportProgress((int)((double)(_FileCounter) / FilesInFolder.Count * 100));
+                    _WorkerUi.ReportProgress((int)((double)(_FileCounter) / _FilesToGo * 100));
                 }
             }
 
@@ -817,6 +863,8 @@ namespace ImageOrganizerWinForms.ViewModel
             Progress.Visible = true;
             CancelWorker.Visible = true;
 
+            TimeOpSmooth.Clear();
+
             return new Result(Status.Ok);
         }
 
@@ -862,18 +910,46 @@ namespace ImageOrganizerWinForms.ViewModel
                     ShowMessage(e.UserState.ToString());
                 }
 
-                if (e.ProgressPercentage > 0)
+                if (!TimeOperation.IsRunning)
                 {
-                    double p = 100 / e.ProgressPercentage - 1;
-                    double rawH = TimeLeftToMove.Elapsed.TotalHours * p;
-                    double rawM = (TimeLeftToMove.Elapsed.TotalMinutes) * p;
-                    double overM = Math.Truncate(rawM / 60);
-                    rawM -= overM*60;
-                    rawH += overM;
-                    double h = Convert.ToDouble(Convert.ToInt64(rawH)); //Math.Truncate(rawH);// Convert.ToDouble(Convert.ToInt64(rawH));
-                    double m = Convert.ToDouble(Convert.ToInt64(rawM * 100)) / 100; //Math.Truncate(rawM * 100) / 100;// Convert.ToDouble(Convert.ToInt64(rawH));
-                    TimeLeft.Text = $"Time left: {h.ToString()}h {m.ToString()}min";
+                    TimeOperation.Start();
                 }
+                else
+                {
+                    TimeOperation.Stop();
+                    TimeOpSmooth.Add(TimeOperation.ElapsedMilliseconds);
+                    double t = TimeOpSmooth.Median;
+                    if (_FileCounter > 0)
+                    {
+                        double timeLeftMs = t * (_FilesToGo - _FileCounter);
+                        double h = Math.Truncate(timeLeftMs / 3600000); // hours = ms / 1000 / 60 / 60
+                        if (h>0)
+                        {
+                            double m = Math.Truncate(timeLeftMs / 6000) / 100; //  min2Round = ms / 1000 / 60 * 100
+                            TimeLeft.Text = $"Time left: {h.ToString()}h {m.ToString()}min";
+                        }
+                        else
+                        {
+                            double m = Math.Truncate(timeLeftMs / 6000); //  min2Round = ms / 1000 / 60 * 100
+                            double s = Math.Truncate(timeLeftMs / 10) / 100; //  min2Round = ms / 1000 * 100
+                            TimeLeft.Text = $"Time left: {m.ToString()}min {s.ToString()}s";
+                        }
+                    }
+                    TimeOperation.Restart();
+                }
+
+                //if (e.ProgressPercentage > 0)
+                //{
+                //    double p = 100 / e.ProgressPercentage - 1;
+                //    double rawH = TimeLeftToMove.Elapsed.TotalHours * p;
+                //    double rawM = (TimeLeftToMove.Elapsed.TotalMinutes) * p;
+                //    double overM = Math.Truncate(rawM / 60);
+                //    rawM -= overM*60;
+                //    rawH += overM;
+                //    double h = Convert.ToDouble(Convert.ToInt64(rawH)); //Math.Truncate(rawH);// Convert.ToDouble(Convert.ToInt64(rawH));
+                //    double m = Convert.ToDouble(Convert.ToInt64(rawM * 100)) / 100; //Math.Truncate(rawM * 100) / 100;// Convert.ToDouble(Convert.ToInt64(rawH));
+                //    TimeLeft.Text = $"Time left: {h.ToString()}h {m.ToString()}min";
+                //}
             });
         }
 
@@ -902,11 +978,20 @@ namespace ImageOrganizerWinForms.ViewModel
                 ShowMessage("Inner exception: ", LogImage.Error, exp.InnerException);
             }
 
-            TimeLeftToMove.Stop();
-            double h = Math.Truncate(TimeLeftToMove.Elapsed.TotalHours * 100) / 100;
-            double s = Math.Truncate((TimeLeftToMove.Elapsed.TotalMinutes - h * 60)  * 100) / 100;
-            TimeLeft.Text = $"Time elapsed: {h.ToString()}h {s.ToString()}min";
-            if (sender == _WorkerUi) _WorkerUi = null;
+            TimeWorking.Stop();
+            double timeElapsed = TimeWorking.ElapsedMilliseconds;
+            double h = Math.Truncate(timeElapsed / 3600000); // hours = ms / 1000 / 60 / 60
+            if (h > 0)
+            {
+                double m = Math.Truncate(timeElapsed / 6000) / 100; //  min2Round = ms / 1000 / 60 * 100
+                TimeLeft.Text = $"Time elapsed: {h.ToString()}h {m.ToString()}min";
+            }
+            else
+            {
+                double m = Math.Truncate(timeElapsed / 6000); //  min2Round = ms / 1000 / 60 * 100
+                double s = Math.Truncate(timeElapsed / 10) / 100; //  min2Round = ms / 1000 * 100
+                TimeLeft.Text = $"Time elapsed: {m.ToString()}min {s.ToString()}s";
+            }
         }
 
         #endregion
