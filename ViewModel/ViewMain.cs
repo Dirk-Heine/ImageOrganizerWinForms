@@ -868,10 +868,10 @@ namespace ImageOrganizerWinForms.ViewModel
                     double rawH = TimeLeftToMove.Elapsed.TotalHours * p;
                     double rawM = (TimeLeftToMove.Elapsed.TotalMinutes) * p;
                     double overM = Math.Truncate(rawM / 60);
-                    rawM -= overM;
+                    rawM -= overM*60;
                     rawH += overM;
-                    double h = Math.Truncate(rawH);// Convert.ToDouble(Convert.ToInt64(rawH));
-                    double m = Math.Truncate(rawM * 100) / 100;
+                    double h = Convert.ToDouble(Convert.ToInt64(rawH)); //Math.Truncate(rawH);// Convert.ToDouble(Convert.ToInt64(rawH));
+                    double m = Convert.ToDouble(Convert.ToInt64(rawM * 100)) / 100; //Math.Truncate(rawM * 100) / 100;// Convert.ToDouble(Convert.ToInt64(rawH));
                     TimeLeft.Text = $"Time left: {h.ToString()}h {m.ToString()}min";
                 }
             });
