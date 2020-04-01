@@ -61,6 +61,8 @@ namespace ImageOrganizerWinForms.ViewModel
 
         #endregion
 
+        #region Constructor
+
         public ViewModelMain()
         {
             InitializeComponent();
@@ -77,44 +79,12 @@ namespace ImageOrganizerWinForms.ViewModel
             CheckedCameraType.Checked = ModelSettings.FolderForCameraType;
             DeleteEmptyFolders.Checked = ModelSettings.DeleteEmptyFolders;
             UseTrashFolder.Checked = ModelSettings.UseTrashFolder;
-
-            //// initialize data grid view
-            //FilesInFolderSource = new BindingSource(FilesInFolder, null);
-            //FilesInFolderDataGrid.AutoGenerateColumns = false;
-            //FilesInFolderDataGrid.AutoSize = true;
-
-            //// Initialize and add a text box column.
-            //DataGridViewCell cell = new DataGridViewTextBoxCell();
-            //DataGridViewColumn column = new DataGridViewTextBoxColumn();
-            //column.DataPropertyName = "FilePath";
-            //column.CellTemplate = cell;
-            //column.Name = column.DataPropertyName;
-            //column.HeaderText = "File";
-            //FilesInFolderDataGrid.Columns.Add(column);
-
-            //column = new DataGridViewTextBoxColumn();
-            //column.DataPropertyName = "FilePathNew";
-            //column.CellTemplate = cell;
-            //column.Name = column.DataPropertyName;
-            //column.HeaderText = "New file";
-            //FilesInFolderDataGrid.Columns.Add(column);
-
-            //column = new DataGridViewTextBoxColumn();
-            //column.DataPropertyName = "CameraType";
-            //column.CellTemplate = cell;
-            //column.Name = column.DataPropertyName;
-            //column.HeaderText = "Camera";
-            //FilesInFolderDataGrid.Columns.Add(column);
-
-            //column = new DataGridViewTextBoxColumn();
-            //column.DataPropertyName = "DateTaken";
-            //column.CellTemplate = cell;
-            //column.Name = column.DataPropertyName;
-            //column.HeaderText = "Date taken";
-            //FilesInFolderDataGrid.Columns.Add(column);
-            
-            //FilesInFolderDataGrid.DataSource = FilesInFolderSource;
         }
+
+        #endregion
+
+        #region Win forms callbacks
+
         private void CancelWorker_Click(object sender, EventArgs e)
         {
             _CancelWorker(null);
@@ -172,7 +142,8 @@ namespace ImageOrganizerWinForms.ViewModel
             _WorkerUi.RunWorkerAsync();
         }
 
-
+        #endregion
+        
         #region Methods
 
         #region UI
