@@ -50,6 +50,9 @@
             this.DeleteEmptyFolders = new System.Windows.Forms.CheckBox();
             this.UseTrashFolder = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.TimeLeft = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.FilesToMove = new System.Windows.Forms.NumericUpDown();
             this.FilesMoved = new System.Windows.Forms.NumericUpDown();
             this.Progress = new System.Windows.Forms.ProgressBar();
@@ -62,17 +65,12 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.OpenSettings = new System.Windows.Forms.Button();
             this.Logger = new System.Windows.Forms.ListBox();
-            this.FilesInFolderDataGrid = new System.Windows.Forms.DataGridView();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.TimeLeft = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.FilesToMove)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.FilesMoved)).BeginInit();
             this.groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.FilesInFolderDataGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // FolderPathInput
@@ -296,6 +294,33 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Organizing";
             // 
+            // TimeLeft
+            // 
+            this.TimeLeft.AutoSize = true;
+            this.TimeLeft.Location = new System.Drawing.Point(8, 66);
+            this.TimeLeft.Name = "TimeLeft";
+            this.TimeLeft.Size = new System.Drawing.Size(30, 13);
+            this.TimeLeft.TabIndex = 20;
+            this.TimeLeft.Text = "Time";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(89, 91);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(63, 13);
+            this.label8.TabIndex = 19;
+            this.label8.Text = "Files moved";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(8, 91);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(69, 13);
+            this.label7.TabIndex = 18;
+            this.label7.Text = "Files to move";
+            // 
             // FilesToMove
             // 
             this.FilesToMove.Enabled = false;
@@ -426,49 +451,12 @@
             this.Logger.Size = new System.Drawing.Size(855, 225);
             this.Logger.TabIndex = 101;
             // 
-            // FilesInFolderDataGrid
-            // 
-            this.FilesInFolderDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.FilesInFolderDataGrid.Location = new System.Drawing.Point(18, 382);
-            this.FilesInFolderDataGrid.Name = "FilesInFolderDataGrid";
-            this.FilesInFolderDataGrid.Size = new System.Drawing.Size(855, 129);
-            this.FilesInFolderDataGrid.TabIndex = 11;
-            this.FilesInFolderDataGrid.Visible = false;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 91);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(69, 13);
-            this.label7.TabIndex = 18;
-            this.label7.Text = "Files to move";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(89, 91);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(63, 13);
-            this.label8.TabIndex = 19;
-            this.label8.Text = "Files moved";
-            // 
-            // TimeLeft
-            // 
-            this.TimeLeft.AutoSize = true;
-            this.TimeLeft.Location = new System.Drawing.Point(8, 66);
-            this.TimeLeft.Name = "TimeLeft";
-            this.TimeLeft.Size = new System.Drawing.Size(30, 13);
-            this.TimeLeft.TabIndex = 20;
-            this.TimeLeft.Text = "Time";
-            // 
             // ViewModelMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(885, 524);
             this.Controls.Add(this.Progress);
-            this.Controls.Add(this.FilesInFolderDataGrid);
             this.Controls.Add(this.Logger);
             this.Controls.Add(this.OpenSettings);
             this.Controls.Add(this.CancelWorker);
@@ -497,7 +485,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.FilesMoved)).EndInit();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.FilesInFolderDataGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -539,7 +526,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown FilesToMove;
         private System.Windows.Forms.NumericUpDown FilesMoved;
-        private System.Windows.Forms.DataGridView FilesInFolderDataGrid;
         private System.Windows.Forms.Label TimeLeft;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;

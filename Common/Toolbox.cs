@@ -225,5 +225,53 @@ namespace ImageOrganizerWinForms
         {
             return input.Count(x => x.Equals(charToCount));
         }
+
+
+        /// <summary>
+        /// Converts time in ms to a string with either hours and minutes or minutes and seconds
+        /// </summary>
+        /// <param name="timeInMs"></param>
+        /// <returns></returns>
+        public static string MillisecondsToString(double timeInMs)
+        {
+            double h = Math.Truncate(timeInMs / 3600000); // hours = ms / 1000 / 60 / 60
+            if (h > 0)
+            {
+                double m = Math.Truncate((timeInMs - h * 60 * 60 * 1000) / 600000); //  min2Round = ms / 1000 / 60
+                return $"{h.ToString()}h {m.ToString()}min";
+            }
+            else
+            {
+                double m = Math.Truncate(timeInMs / 60000); //  min2Round = ms / 1000 / 60 * 100
+                double s = Math.Truncate((timeInMs - m * 60 * 1000) / 1000); //  min2Round = ms / 1000
+                return $"{m.ToString()}min {s.ToString()}s";
+            }
+        }
+
+        /// <summary>
+        /// Converts month number to german string
+        /// </summary>
+        /// <param name="i"></param>
+        /// <returns></returns>
+        public static string GetMonthName(int i)
+        {
+            switch (i)
+            {
+                case 1: return "Januar";
+                case 2: return "Februar";
+                case 3: return "März";
+                case 4: return "April";
+                case 5: return "Mai";
+                case 6: return "Juni";
+                case 7: return "Juli";
+                case 8: return "August";
+                case 9: return "September";
+                case 10: return "Oktober";
+                case 11: return "November";
+                case 12: return "Dezember";
+                default:
+                    return null;
+            }
+        }
     }
 }

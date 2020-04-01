@@ -49,7 +49,9 @@
     <Compile Include="Common\AbortableBackgroundworker.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Common\FileData.cs" />
     <Compile Include="Common\Result.cs" />
+    <Compile Include="Common\Smoothing.cs" />
     <Compile Include="Common\Toolbox.cs" />
     <Compile Include="Model\ModelLogFile.cs" />
     <Compile Include="Model\ModelSettings.cs" />
