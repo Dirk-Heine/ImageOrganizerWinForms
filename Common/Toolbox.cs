@@ -44,6 +44,7 @@ namespace ImageOrganizerWinForms
         public static string CombinePathAndFileName(string path, string fileName = "")
         {
             string newPath;
+            path = EvaluateFolderPath(path, ModelSettings.ExeFilePath);
             if (path.EndsWith(ModelSettings.FolderSeparator))
             {
                 newPath = path + fileName;

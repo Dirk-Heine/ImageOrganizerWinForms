@@ -16,10 +16,11 @@ namespace ImageOrganizerWinForms.Model
      static class ModelSettings //: ModelBase
     {
         // constants
+        public const string LOG_NAME = "LogFile.txt";
         public static string Version { get; /*set;*/ } = "V0.1";
         public static string Title { get; /*set;*/ } = "Image organizer" + Version;
         public static string TitleShort { get; /*set;*/ } = "IO " + Version;
-        public static string LogFileName { get; set; } = "LogFile.txt"; 
+        public static string LogFileName { get; set; } = LOG_NAME;
         internal static string SettingsFileName { get; set; } = "Settings.xml";
         public static string ExeFilePath { get; set; } = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
         public static string FolderSeparator { get; set; } = (ExeFilePath.Substring(1, 2) == ":\\") ? "\\" : "/";
@@ -95,6 +96,15 @@ namespace ImageOrganizerWinForms.Model
         /// </summary>
         public static void ReadSettings()
         {
+            if (LogFileName == LOG_NAME)
+            {
+                string dirLogFile = Toolbox.CombinePathAndFileName("LogFiles");
+                Directory.CreateDirectory(dirLogFile);
+                string date = DateTime.Now.Year.ToString("d4") + DateTime.Now.Month.ToString("d2") + DateTime.Now.Day.ToString("d2");
+                string time = DateTime.Now.Hour.ToString("d2") + DateTime.Now.Minute.ToString("d2") + DateTime.Now.Second.ToString("d2");
+                string pathLogFile = Toolbox.CombinePathAndFileName(dirLogFile, $"LogFile_{date}_{time}.txt");
+                LogFileName = pathLogFile;
+            }
             try
             { 
                 if (!File.Exists(SettingsFileName))

@@ -771,8 +771,8 @@ namespace ImageOrganizerWinForms.ViewModel
                     logEntryFile.Message += Environment.NewLine + error.StackTrace;
                 }
             }
-
-            ModelLogFile logFile = new ModelLogFile(Toolbox.CombinePathAndFileName(ModelSettings.ExeFilePath, ModelSettings.LogFileName));
+            
+            ModelLogFile logFile = new ModelLogFile(ModelSettings.LogFileName);
 
             // Write in File
             logFile.AddLogEntry(logEntryFile);
