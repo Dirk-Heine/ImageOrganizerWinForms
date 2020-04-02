@@ -41,8 +41,7 @@ namespace ImageOrganizerWinForms.Common
             ".jpg",
             ".png",
             ".jpeg",
-            ".gif",
-            ".heic"
+            ".gif"
         };
 
         private string[] _SupportedVideos = new string[] {

@@ -96,6 +96,7 @@ namespace ImageOrganizerWinForms.Model
         /// </summary>
         public static void ReadSettings()
         {
+            // update log file name
             if (LogFileName == LOG_NAME)
             {
                 string dirLogFile = Toolbox.CombinePathAndFileName("LogFiles");
@@ -105,6 +106,8 @@ namespace ImageOrganizerWinForms.Model
                 string pathLogFile = Toolbox.CombinePathAndFileName(dirLogFile, $"LogFile_{date}_{time}.txt");
                 LogFileName = pathLogFile;
             }
+
+            // read settings from xml
             try
             { 
                 if (!File.Exists(SettingsFileName))

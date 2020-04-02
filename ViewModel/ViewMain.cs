@@ -274,10 +274,10 @@ namespace ImageOrganizerWinForms.ViewModel
                 _DeleteEmptyDirectories(FolderPathInput.Text);
             }
 
-            foreach (var item in OtherFilesInFolder)
-            {
-                ShowMessage($"Other file in folder : {item.FilePath}");
-            }
+            //foreach (var item in OtherFilesInFolder)
+            //{
+            //    ShowMessage($"Other file in folder : {item.FilePath}");
+            //}
 
             ShowMessage($"Other files in folders: {_OtherFilesCounter}");
             ShowMessage($"Files moved: {FilesMoved.Value}");
