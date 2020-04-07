@@ -407,7 +407,7 @@ namespace ImageOrganizerWinForms.ViewModel
                     {
                         try
                         {
-                            Directory.Move(f.DirectoryNameOld, f.DirectoryNameNew);
+                            Directory.Move(@f.DirectoryNameOld, @f.DirectoryNameNew);
                             DirectoriesRenamed.Add(f.DirectoryNameOld, f.DirectoryNameNew);
                             // rename directory in file data if necessary
                             _RenameFileData(ref f, DirectoriesRenamed);
@@ -426,7 +426,7 @@ namespace ImageOrganizerWinForms.ViewModel
                         filePath = _PathCheckDublicate(filePath, f);
                         if (!filePath.Equals(f.FilePath) && File.Exists(f.FilePath))
                         {
-                            File.Move(f.FilePath, filePath);
+                            File.Move(@f.FilePath, @filePath);
                             ShowMessage($"Renamed {f.FilePath.Replace(FolderPathInput.Text, "")} to: {filePath.Replace(FolderPathInput.Text, "")}");
                             Invoke((Action)delegate { FilesMoved.Value++; });
                         }
@@ -438,7 +438,7 @@ namespace ImageOrganizerWinForms.ViewModel
                     System.IO.Directory.CreateDirectory(f.DirectoryNameNew);
 
                     // Move file to new directory
-                    File.Move(f.FilePath, f.FilePathNew);
+                    File.Move(@f.FilePath, @f.FilePathNew);
                     ShowMessage($"Moved {f.FilePath.Replace(FolderPathInput.Text, "")} to: {f.FilePathNew.Replace(FolderPathOutput.Text, "")}");
                     Invoke((Action)delegate { FilesMoved.Value++; });
                 }
