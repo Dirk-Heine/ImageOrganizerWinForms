@@ -14,7 +14,8 @@ namespace ImageOrganizerWinForms
             if (ModelSettings.FolderSeparator == "/")
             {
                 //return path.Replace(" ", "\\ ");
-                return "\"" + path + "\"";
+                //return "\"" + path + "\"";
+                return path;
             }
             else
             {
