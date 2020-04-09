@@ -267,7 +267,7 @@ namespace ImageOrganizerWinForms.ViewModel
 
             FilesInFolder = null;
 
-            // Delete empty folders
+                // Delete empty folders
             if (DeleteEmptyFolders.Checked && !_WorkerUi.CancellationPending)
             {
                 ShowMessage($"Deleting empty directories.");
@@ -366,6 +366,17 @@ namespace ImageOrganizerWinForms.ViewModel
                 }
                 else // other files
                 {
+                    if (!CheckedJustRename.Checked)
+                    {
+                        f.FileNameNew = f.FileName;
+                        string dirNew = Toolbox.CombinePathAndFileName(FolderPathOutput.Text, "Others");
+                        f.DirectoryNameNew = Toolbox.CombinePathAndFileName(dirNew, f.FileType.Replace(".", ""));
+                        System.IO.Directory.CreateDirectory(f.DirectoryNameNew);
+
+                        f.FilePathNew = Toolbox.CombinePathAndFileName(f.DirectoryNameNew, f.FileNameNew);
+                        retVal = true;
+                    }
+
                     // Add file to collection
                     _OtherFilesCounter++;
                     OtherFilesInFolder.Add(f);
@@ -392,7 +403,6 @@ namespace ImageOrganizerWinForms.ViewModel
 
             f.FilePathNew = _PathCheckDublicate(f.FilePathNew, f);
             int startIndexFileName = f.FilePathNew.LastIndexOf(ModelSettings.FolderSeparator) + 1;
-            //int startIndexFileName = f.FilePathNew.LastIndexOf(f.FileNameNew.Replace(f.FileType, "").Replace(f.FileType.ToLower(), ""));
             f.FileNameNew = f.FilePathNew.Substring(startIndexFileName);
 
             if (File.Exists(f.FilePath))
