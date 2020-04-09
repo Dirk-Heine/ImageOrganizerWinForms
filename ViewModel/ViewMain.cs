@@ -366,7 +366,7 @@ namespace ImageOrganizerWinForms.ViewModel
                 }
                 else // other files
                 {
-                    if (!CheckedJustRename.Checked)
+                    if (!CheckedJustRename.Checked && MoveOtherFiles.Checked)
                     {
                         f.FileNameNew = f.FileName;
                         string dirNew = Toolbox.CombinePathAndFileName(FolderPathOutput.Text, "Others");
