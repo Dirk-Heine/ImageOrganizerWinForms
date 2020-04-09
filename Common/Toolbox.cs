@@ -9,13 +9,28 @@ namespace ImageOrganizerWinForms
 {
     public static class Toolbox
     {
+        public static string PathExitSpaces(string path)
+        {
+            if (ModelSettings.FolderSeparator == "/")
+            {
+                //return path.Replace(" ", "\\ ");
+                //return "\"" + path + "\"";
+                return path;
+            }
+            else
+            {
+                return path;
+            }
+        }
+
         /// <summary>
         /// Returns full folder path (related to FilePath)
         /// </summary>
         public static string EvaluateFolderPath(string path, string basePath)
         {
             string fullPath;
-            if (path.Length > 3 && path.Substring(1, 2) == ":\\" && ModelSettings.FolderSeparator == "\\"
+            if ((path.Length >= 3 && path.Substring(1, 2) == ":\\"
+                || path.Length >= 2 && path.StartsWith("\\\\")) && ModelSettings.FolderSeparator == "\\"
                 || Directory.Exists(path) && ModelSettings.FolderSeparator == "/")
             {
                 fullPath = path;

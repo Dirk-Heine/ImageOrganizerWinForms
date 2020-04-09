@@ -65,6 +65,7 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.OpenSettings = new System.Windows.Forms.Button();
             this.Logger = new System.Windows.Forms.ListBox();
+            this.MoveOtherFiles = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -277,6 +278,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.MoveOtherFiles);
             this.groupBox3.Controls.Add(this.TimeLeft);
             this.groupBox3.Controls.Add(this.label8);
             this.groupBox3.Controls.Add(this.label7);
@@ -289,7 +291,7 @@
             this.groupBox3.Controls.Add(this.groupBox2);
             this.groupBox3.Location = new System.Drawing.Point(431, 128);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(451, 139);
+            this.groupBox3.Size = new System.Drawing.Size(451, 173);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Organizing";
@@ -396,6 +398,7 @@
             this.OldNameFile.Name = "OldNameFile";
             this.OldNameFile.Size = new System.Drawing.Size(308, 20);
             this.OldNameFile.TabIndex = 10;
+            this.OldNameFile.Visible = false;
             // 
             // OldNameFolder
             // 
@@ -412,6 +415,7 @@
             this.label6.Size = new System.Drawing.Size(69, 13);
             this.label6.TabIndex = 1;
             this.label6.Text = "Org file name";
+            this.label6.Visible = false;
             // 
             // listBox1
             // 
@@ -446,10 +450,22 @@
             // Logger
             // 
             this.Logger.FormattingEnabled = true;
-            this.Logger.Location = new System.Drawing.Point(18, 281);
+            this.Logger.Location = new System.Drawing.Point(18, 307);
             this.Logger.Name = "Logger";
-            this.Logger.Size = new System.Drawing.Size(855, 225);
+            this.Logger.Size = new System.Drawing.Size(855, 199);
             this.Logger.TabIndex = 101;
+            // 
+            // MoveOtherFiles
+            // 
+            this.MoveOtherFiles.AutoSize = true;
+            this.MoveOtherFiles.Checked = true;
+            this.MoveOtherFiles.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.MoveOtherFiles.Location = new System.Drawing.Point(183, 137);
+            this.MoveOtherFiles.Name = "MoveOtherFiles";
+            this.MoveOtherFiles.Size = new System.Drawing.Size(123, 17);
+            this.MoveOtherFiles.TabIndex = 21;
+            this.MoveOtherFiles.Text = "Move also other files";
+            this.MoveOtherFiles.UseVisualStyleBackColor = true;
             // 
             // ViewModelMain
             // 
@@ -529,6 +545,7 @@
         private System.Windows.Forms.Label TimeLeft;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.CheckBox MoveOtherFiles;
     }
 }
 

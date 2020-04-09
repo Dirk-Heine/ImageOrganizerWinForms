@@ -417,7 +417,8 @@ namespace ImageOrganizerWinForms.ViewModel
                     {
                         try
                         {
-                            Directory.Move(f.DirectoryNameOld, f.DirectoryNameNew);
+                            // Directory.Move("\""+f.DirectoryNameOld+ "\"", "\""+f.DirectoryNameNew+ "\"");
+                            Directory.Move(Toolbox.PathExitSpaces(f.DirectoryNameOld), Toolbox.PathExitSpaces(f.DirectoryNameNew));
                             DirectoriesRenamed.Add(f.DirectoryNameOld, f.DirectoryNameNew);
                             // rename directory in file data if necessary
                             _RenameFileData(ref f, DirectoriesRenamed);
@@ -434,9 +435,10 @@ namespace ImageOrganizerWinForms.ViewModel
                     {
                         string filePath = Toolbox.CombinePathAndFileName(fileDir, f.FileNameNew);
                         filePath = _PathCheckDublicate(filePath, f);
-                        if (!filePath.Equals(f.FilePath) && File.Exists(f.FilePath))
+                        if (!filePath.Equals(f.FilePath) && File.Exists(Toolbox.PathExitSpaces(f.FilePath)))
                         {
-                            File.Move(f.FilePath, filePath);
+                            // File.Move("\""+f.FilePath+ "\"", "\""+filePath+ "\"");
+                            File.Move(Toolbox.PathExitSpaces(f.FilePath), Toolbox.PathExitSpaces(filePath));
                             ShowMessage($"Renamed {f.FilePath.Replace(FolderPathInput.Text, "")} to: {filePath.Replace(FolderPathInput.Text, "")}");
                             Invoke((Action)delegate { FilesMoved.Value++; });
                         }
@@ -445,10 +447,10 @@ namespace ImageOrganizerWinForms.ViewModel
                 else
                 {
                     // Check if new directory exists
-                    System.IO.Directory.CreateDirectory(f.DirectoryNameNew);
+                    System.IO.Directory.CreateDirectory(Toolbox.PathExitSpaces(f.DirectoryNameNew));
 
                     // Move file to new directory
-                    File.Move(f.FilePath, f.FilePathNew);
+                    File.Move(Toolbox.PathExitSpaces(f.FilePath), Toolbox.PathExitSpaces(f.FilePathNew));
                     ShowMessage($"Moved {f.FilePath.Replace(FolderPathInput.Text, "")} to: {f.FilePathNew.Replace(FolderPathOutput.Text, "")}");
                     Invoke((Action)delegate { FilesMoved.Value++; });
                 }
@@ -518,7 +520,7 @@ namespace ImageOrganizerWinForms.ViewModel
             {
                 return filePath;
             }
-            while (File.Exists(newPath))
+            while (File.Exists(Toolbox.PathExitSpaces(newPath)))
             {
                 FileInfo fi = new FileInfo(filePath);
                 //if (newPath == f.FilePath)
@@ -608,18 +610,18 @@ namespace ImageOrganizerWinForms.ViewModel
                 string newPath = Toolbox.CombinePathAndFileName(FolderTrash, f.FileName).Replace(f.FileType, "");
                 string trash = newPath + f.FileType;
                 int count = 0;
-                while (File.Exists(trash))
+                while (File.Exists(Toolbox.PathExitSpaces(trash)))
                 {
                     trash = newPath + "_" + ++count + f.FileType;
                 }
 
                 System.IO.Directory.CreateDirectory(FolderTrash);
-                File.Move(f.FilePath, trash);
+                File.Move(Toolbox.PathExitSpaces(f.FilePath), Toolbox.PathExitSpaces(trash));
                 ShowMessage($"Moved to trash folder: {f.FilePath.Replace(FolderPathInput.Text, "")}");
             }
             else
             {
-                File.Delete(f.FilePath);
+                File.Delete(Toolbox.PathExitSpaces(f.FilePath));
                 ShowMessage($"Deleted: {f.FilePath.Replace(FolderPathInput.Text, "")}");
             }
         }
