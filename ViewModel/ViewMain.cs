@@ -79,6 +79,7 @@ namespace ImageOrganizerWinForms.ViewModel
             CheckedCameraType.Checked = ModelSettings.FolderForCameraType;
             DeleteEmptyFolders.Checked = ModelSettings.DeleteEmptyFolders;
             UseTrashFolder.Checked = ModelSettings.UseTrashFolder;
+            MoveOtherFiles.Checked = ModelSettings.MoveOtherFiles;
         }
 
         #endregion

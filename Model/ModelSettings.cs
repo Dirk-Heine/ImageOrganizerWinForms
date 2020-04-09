@@ -38,6 +38,7 @@ namespace ImageOrganizerWinForms.Model
         public static bool FolderForCameraType { get; set; }
         public static bool DeleteEmptyFolders { get; set; }
         public static bool UseTrashFolder { get; set; }
+        public static bool MoveOtherFiles { get; set; }
 
         /// <summary>
         /// Writes the Settings.xml file
@@ -68,6 +69,7 @@ namespace ImageOrganizerWinForms.Model
             checks.Add(new XElement("FolderForCameraType", FolderForCameraType));
             checks.Add(new XElement("DeleteEmptyFolders", DeleteEmptyFolders));
             checks.Add(new XElement("UseTrashFolder", UseTrashFolder));
+            checks.Add(new XElement("MoveOtherFiles", UseTrashFolder));
             defaults.Add(checks);
 
             // FilePaths
@@ -149,6 +151,8 @@ namespace ImageOrganizerWinForms.Model
                         checks.Element("DeleteEmptyFolders").Value.ToString());
                     UseTrashFolder = Convert.ToBoolean(
                         checks.Element("UseTrashFolder").Value.ToString());
+                    MoveOtherFiles = Convert.ToBoolean(
+                        checks.Element("MoveOtherFiles").Value.ToString());
                 }
                 catch { }
 
