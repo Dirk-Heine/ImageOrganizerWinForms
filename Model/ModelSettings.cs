@@ -69,7 +69,7 @@ namespace ImageOrganizerWinForms.Model
             checks.Add(new XElement("FolderForCameraType", FolderForCameraType));
             checks.Add(new XElement("DeleteEmptyFolders", DeleteEmptyFolders));
             checks.Add(new XElement("UseTrashFolder", UseTrashFolder));
-            checks.Add(new XElement("MoveOtherFiles", UseTrashFolder));
+            checks.Add(new XElement("MoveOtherFiles", MoveOtherFiles));
             defaults.Add(checks);
 
             // FilePaths
@@ -206,7 +206,8 @@ namespace ImageOrganizerWinForms.Model
             }
             if (string.IsNullOrEmpty(OldNameFile))
             {
-                OldNameFile = "<YEAR>_<MONTH>_<DAY>-<HOUR>h_<MIN>min_<SEC>s";
+                //OldNameFile = "<YEAR>_<MONTH>_<DAY>-<HOUR>h_<MIN>min_<SEC>s";
+                OldNameFile = "IMG_<YEAR><MONTH><DAY>_<HOUR><MIN><SEC>";
             }
         }
     }

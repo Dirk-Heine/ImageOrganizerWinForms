@@ -50,6 +50,7 @@
             this.DeleteEmptyFolders = new System.Windows.Forms.CheckBox();
             this.UseTrashFolder = new System.Windows.Forms.CheckBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.MoveOtherFiles = new System.Windows.Forms.CheckBox();
             this.TimeLeft = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
@@ -65,7 +66,6 @@
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.OpenSettings = new System.Windows.Forms.Button();
             this.Logger = new System.Windows.Forms.ListBox();
-            this.MoveOtherFiles = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -76,25 +76,28 @@
             // 
             // FolderPathInput
             // 
-            this.FolderPathInput.Location = new System.Drawing.Point(95, 21);
+            this.FolderPathInput.Location = new System.Drawing.Point(127, 26);
+            this.FolderPathInput.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.FolderPathInput.Name = "FolderPathInput";
-            this.FolderPathInput.Size = new System.Drawing.Size(279, 20);
+            this.FolderPathInput.Size = new System.Drawing.Size(371, 22);
             this.FolderPathInput.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(15, 24);
+            this.label1.Location = new System.Drawing.Point(20, 30);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(62, 13);
+            this.label1.Size = new System.Drawing.Size(83, 17);
             this.label1.TabIndex = 1;
             this.label1.Text = "Folder input";
             // 
             // SelectFolderInput
             // 
-            this.SelectFolderInput.Location = new System.Drawing.Point(381, 19);
+            this.SelectFolderInput.Location = new System.Drawing.Point(508, 23);
+            this.SelectFolderInput.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.SelectFolderInput.Name = "SelectFolderInput";
-            this.SelectFolderInput.Size = new System.Drawing.Size(35, 23);
+            this.SelectFolderInput.Size = new System.Drawing.Size(47, 28);
             this.SelectFolderInput.TabIndex = 2;
             this.SelectFolderInput.Text = "...";
             this.SelectFolderInput.UseVisualStyleBackColor = true;
@@ -102,25 +105,28 @@
             // 
             // FolderPathOutput
             // 
-            this.FolderPathOutput.Location = new System.Drawing.Point(95, 50);
+            this.FolderPathOutput.Location = new System.Drawing.Point(127, 62);
+            this.FolderPathOutput.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.FolderPathOutput.Name = "FolderPathOutput";
-            this.FolderPathOutput.Size = new System.Drawing.Size(279, 20);
+            this.FolderPathOutput.Size = new System.Drawing.Size(371, 22);
             this.FolderPathOutput.TabIndex = 3;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(15, 53);
+            this.label2.Location = new System.Drawing.Point(20, 65);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(69, 13);
+            this.label2.Size = new System.Drawing.Size(92, 17);
             this.label2.TabIndex = 1;
             this.label2.Text = "Folder output";
             // 
             // SelectFolderOutput
             // 
-            this.SelectFolderOutput.Location = new System.Drawing.Point(381, 48);
+            this.SelectFolderOutput.Location = new System.Drawing.Point(508, 59);
+            this.SelectFolderOutput.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.SelectFolderOutput.Name = "SelectFolderOutput";
-            this.SelectFolderOutput.Size = new System.Drawing.Size(35, 23);
+            this.SelectFolderOutput.Size = new System.Drawing.Size(47, 28);
             this.SelectFolderOutput.TabIndex = 4;
             this.SelectFolderOutput.Text = "...";
             this.SelectFolderOutput.UseVisualStyleBackColor = true;
@@ -128,9 +134,10 @@
             // 
             // AnalyzeFolderInput
             // 
-            this.AnalyzeFolderInput.Location = new System.Drawing.Point(9, 15);
+            this.AnalyzeFolderInput.Location = new System.Drawing.Point(12, 18);
+            this.AnalyzeFolderInput.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.AnalyzeFolderInput.Name = "AnalyzeFolderInput";
-            this.AnalyzeFolderInput.Size = new System.Drawing.Size(147, 23);
+            this.AnalyzeFolderInput.Size = new System.Drawing.Size(196, 28);
             this.AnalyzeFolderInput.TabIndex = 7;
             this.AnalyzeFolderInput.Text = "Analyze folder input";
             this.AnalyzeFolderInput.UseVisualStyleBackColor = true;
@@ -139,50 +146,56 @@
             // AnalyzeWithSubFolders
             // 
             this.AnalyzeWithSubFolders.AutoSize = true;
-            this.AnalyzeWithSubFolders.Location = new System.Drawing.Point(172, 19);
+            this.AnalyzeWithSubFolders.Location = new System.Drawing.Point(229, 23);
+            this.AnalyzeWithSubFolders.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.AnalyzeWithSubFolders.Name = "AnalyzeWithSubFolders";
-            this.AnalyzeWithSubFolders.Size = new System.Drawing.Size(76, 17);
+            this.AnalyzeWithSubFolders.Size = new System.Drawing.Size(98, 21);
             this.AnalyzeWithSubFolders.TabIndex = 8;
             this.AnalyzeWithSubFolders.Text = "Subfolders";
             this.AnalyzeWithSubFolders.UseVisualStyleBackColor = true;
             // 
             // NewNameFolder
             // 
-            this.NewNameFolder.Location = new System.Drawing.Point(108, 76);
+            this.NewNameFolder.Location = new System.Drawing.Point(144, 94);
+            this.NewNameFolder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.NewNameFolder.Name = "NewNameFolder";
-            this.NewNameFolder.Size = new System.Drawing.Size(308, 20);
+            this.NewNameFolder.Size = new System.Drawing.Size(409, 22);
             this.NewNameFolder.TabIndex = 5;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(15, 79);
+            this.label3.Location = new System.Drawing.Point(20, 97);
+            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(87, 13);
+            this.label3.Size = new System.Drawing.Size(114, 17);
             this.label3.TabIndex = 1;
             this.label3.Text = "New folder name";
             // 
             // NewNameFile
             // 
-            this.NewNameFile.Location = new System.Drawing.Point(108, 102);
+            this.NewNameFile.Location = new System.Drawing.Point(144, 126);
+            this.NewNameFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.NewNameFile.Name = "NewNameFile";
-            this.NewNameFile.Size = new System.Drawing.Size(308, 20);
+            this.NewNameFile.Size = new System.Drawing.Size(409, 22);
             this.NewNameFile.TabIndex = 6;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(15, 105);
+            this.label4.Location = new System.Drawing.Point(20, 129);
+            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(74, 13);
+            this.label4.Size = new System.Drawing.Size(96, 17);
             this.label4.TabIndex = 1;
             this.label4.Text = "New file name";
             // 
             // OrganizeFolder
             // 
-            this.OrganizeFolder.Location = new System.Drawing.Point(11, 21);
+            this.OrganizeFolder.Location = new System.Drawing.Point(15, 26);
+            this.OrganizeFolder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.OrganizeFolder.Name = "OrganizeFolder";
-            this.OrganizeFolder.Size = new System.Drawing.Size(147, 23);
+            this.OrganizeFolder.Size = new System.Drawing.Size(196, 28);
             this.OrganizeFolder.TabIndex = 1;
             this.OrganizeFolder.Text = "Organize files";
             this.OrganizeFolder.UseVisualStyleBackColor = true;
@@ -192,18 +205,21 @@
             // 
             this.groupBox1.Controls.Add(this.CheckedJustRename);
             this.groupBox1.Controls.Add(this.CheckedMove);
-            this.groupBox1.Location = new System.Drawing.Point(176, 16);
+            this.groupBox1.Location = new System.Drawing.Point(235, 20);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(252, 31);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox1.Size = new System.Drawing.Size(336, 38);
             this.groupBox1.TabIndex = 5;
             this.groupBox1.TabStop = false;
             // 
             // CheckedJustRename
             // 
             this.CheckedJustRename.AutoSize = true;
-            this.CheckedJustRename.Location = new System.Drawing.Point(86, 8);
+            this.CheckedJustRename.Location = new System.Drawing.Point(115, 10);
+            this.CheckedJustRename.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.CheckedJustRename.Name = "CheckedJustRename";
-            this.CheckedJustRename.Size = new System.Drawing.Size(103, 17);
+            this.CheckedJustRename.Size = new System.Drawing.Size(136, 21);
             this.CheckedJustRename.TabIndex = 13;
             this.CheckedJustRename.Text = "Just rename files";
             this.CheckedJustRename.UseVisualStyleBackColor = true;
@@ -212,9 +228,10 @@
             // 
             this.CheckedMove.AutoSize = true;
             this.CheckedMove.Checked = true;
-            this.CheckedMove.Location = new System.Drawing.Point(7, 8);
+            this.CheckedMove.Location = new System.Drawing.Point(9, 10);
+            this.CheckedMove.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.CheckedMove.Name = "CheckedMove";
-            this.CheckedMove.Size = new System.Drawing.Size(73, 17);
+            this.CheckedMove.Size = new System.Drawing.Size(92, 21);
             this.CheckedMove.TabIndex = 12;
             this.CheckedMove.TabStop = true;
             this.CheckedMove.Text = "Move files";
@@ -224,18 +241,21 @@
             // 
             this.groupBox2.Controls.Add(this.CheckedCameraType);
             this.groupBox2.Controls.Add(this.CheckedCamera);
-            this.groupBox2.Location = new System.Drawing.Point(176, 53);
+            this.groupBox2.Location = new System.Drawing.Point(235, 65);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(252, 31);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox2.Size = new System.Drawing.Size(336, 38);
             this.groupBox2.TabIndex = 5;
             this.groupBox2.TabStop = false;
             // 
             // CheckedCameraType
             // 
             this.CheckedCameraType.AutoSize = true;
-            this.CheckedCameraType.Location = new System.Drawing.Point(143, 9);
+            this.CheckedCameraType.Location = new System.Drawing.Point(191, 11);
+            this.CheckedCameraType.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.CheckedCameraType.Name = "CheckedCameraType";
-            this.CheckedCameraType.Size = new System.Drawing.Size(84, 17);
+            this.CheckedCameraType.Size = new System.Drawing.Size(109, 21);
             this.CheckedCameraType.TabIndex = 15;
             this.CheckedCameraType.Text = "Camera type";
             this.CheckedCameraType.UseVisualStyleBackColor = true;
@@ -244,9 +264,10 @@
             // 
             this.CheckedCamera.AutoSize = true;
             this.CheckedCamera.Checked = true;
-            this.CheckedCamera.Location = new System.Drawing.Point(7, 9);
+            this.CheckedCamera.Location = new System.Drawing.Point(9, 11);
+            this.CheckedCamera.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.CheckedCamera.Name = "CheckedCamera";
-            this.CheckedCamera.Size = new System.Drawing.Size(130, 17);
+            this.CheckedCamera.Size = new System.Drawing.Size(164, 21);
             this.CheckedCamera.TabIndex = 14;
             this.CheckedCamera.TabStop = true;
             this.CheckedCamera.Text = "With / without camera";
@@ -257,9 +278,10 @@
             this.DeleteEmptyFolders.AutoSize = true;
             this.DeleteEmptyFolders.Checked = true;
             this.DeleteEmptyFolders.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.DeleteEmptyFolders.Location = new System.Drawing.Point(183, 91);
+            this.DeleteEmptyFolders.Location = new System.Drawing.Point(244, 112);
+            this.DeleteEmptyFolders.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.DeleteEmptyFolders.Name = "DeleteEmptyFolders";
-            this.DeleteEmptyFolders.Size = new System.Drawing.Size(122, 17);
+            this.DeleteEmptyFolders.Size = new System.Drawing.Size(160, 21);
             this.DeleteEmptyFolders.TabIndex = 16;
             this.DeleteEmptyFolders.Text = "Delete empty folders";
             this.DeleteEmptyFolders.UseVisualStyleBackColor = true;
@@ -269,9 +291,10 @@
             this.UseTrashFolder.AutoSize = true;
             this.UseTrashFolder.Checked = true;
             this.UseTrashFolder.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.UseTrashFolder.Location = new System.Drawing.Point(183, 114);
+            this.UseTrashFolder.Location = new System.Drawing.Point(244, 140);
+            this.UseTrashFolder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.UseTrashFolder.Name = "UseTrashFolder";
-            this.UseTrashFolder.Size = new System.Drawing.Size(256, 17);
+            this.UseTrashFolder.Size = new System.Drawing.Size(341, 21);
             this.UseTrashFolder.TabIndex = 17;
             this.UseTrashFolder.Text = "Use trash folder instead of deleting dublicate files";
             this.UseTrashFolder.UseVisualStyleBackColor = true;
@@ -289,79 +312,101 @@
             this.groupBox3.Controls.Add(this.DeleteEmptyFolders);
             this.groupBox3.Controls.Add(this.groupBox1);
             this.groupBox3.Controls.Add(this.groupBox2);
-            this.groupBox3.Location = new System.Drawing.Point(431, 128);
+            this.groupBox3.Location = new System.Drawing.Point(575, 158);
+            this.groupBox3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(451, 173);
+            this.groupBox3.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox3.Size = new System.Drawing.Size(601, 213);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Organizing";
             // 
+            // MoveOtherFiles
+            // 
+            this.MoveOtherFiles.AutoSize = true;
+            this.MoveOtherFiles.Checked = true;
+            this.MoveOtherFiles.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.MoveOtherFiles.Location = new System.Drawing.Point(244, 169);
+            this.MoveOtherFiles.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.MoveOtherFiles.Name = "MoveOtherFiles";
+            this.MoveOtherFiles.Size = new System.Drawing.Size(160, 21);
+            this.MoveOtherFiles.TabIndex = 21;
+            this.MoveOtherFiles.Text = "Move also other files";
+            this.MoveOtherFiles.UseVisualStyleBackColor = true;
+            // 
             // TimeLeft
             // 
             this.TimeLeft.AutoSize = true;
-            this.TimeLeft.Location = new System.Drawing.Point(8, 66);
+            this.TimeLeft.Location = new System.Drawing.Point(11, 81);
+            this.TimeLeft.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.TimeLeft.Name = "TimeLeft";
-            this.TimeLeft.Size = new System.Drawing.Size(30, 13);
+            this.TimeLeft.Size = new System.Drawing.Size(39, 17);
             this.TimeLeft.TabIndex = 20;
             this.TimeLeft.Text = "Time";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(89, 91);
+            this.label8.Location = new System.Drawing.Point(119, 112);
+            this.label8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(63, 13);
+            this.label8.Size = new System.Drawing.Size(83, 17);
             this.label8.TabIndex = 19;
             this.label8.Text = "Files moved";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(8, 91);
+            this.label7.Location = new System.Drawing.Point(11, 112);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(69, 13);
+            this.label7.Size = new System.Drawing.Size(91, 17);
             this.label7.TabIndex = 18;
             this.label7.Text = "Files to move";
             // 
             // FilesToMove
             // 
             this.FilesToMove.Enabled = false;
-            this.FilesToMove.Location = new System.Drawing.Point(9, 111);
+            this.FilesToMove.Location = new System.Drawing.Point(12, 137);
+            this.FilesToMove.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.FilesToMove.Maximum = new decimal(new int[] {
             1316134912,
             2328,
             0,
             0});
             this.FilesToMove.Name = "FilesToMove";
-            this.FilesToMove.Size = new System.Drawing.Size(70, 20);
+            this.FilesToMove.Size = new System.Drawing.Size(93, 22);
             this.FilesToMove.TabIndex = 6;
             // 
             // FilesMoved
             // 
             this.FilesMoved.Enabled = false;
-            this.FilesMoved.Location = new System.Drawing.Point(88, 111);
+            this.FilesMoved.Location = new System.Drawing.Point(117, 137);
+            this.FilesMoved.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.FilesMoved.Maximum = new decimal(new int[] {
             1316134912,
             2328,
             0,
             0});
             this.FilesMoved.Name = "FilesMoved";
-            this.FilesMoved.Size = new System.Drawing.Size(70, 20);
+            this.FilesMoved.Size = new System.Drawing.Size(93, 22);
             this.FilesMoved.TabIndex = 6;
             // 
             // Progress
             // 
-            this.Progress.Location = new System.Drawing.Point(123, 244);
+            this.Progress.Location = new System.Drawing.Point(164, 300);
+            this.Progress.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Progress.Name = "Progress";
-            this.Progress.Size = new System.Drawing.Size(189, 23);
+            this.Progress.Size = new System.Drawing.Size(252, 28);
             this.Progress.TabIndex = 7;
             this.Progress.Visible = false;
             // 
             // CancelWorker
             // 
-            this.CancelWorker.Location = new System.Drawing.Point(321, 244);
+            this.CancelWorker.Location = new System.Drawing.Point(428, 300);
+            this.CancelWorker.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.CancelWorker.Name = "CancelWorker";
-            this.CancelWorker.Size = new System.Drawing.Size(95, 23);
+            this.CancelWorker.Size = new System.Drawing.Size(127, 28);
             this.CancelWorker.TabIndex = 19;
             this.CancelWorker.Text = "Cancel";
             this.CancelWorker.UseVisualStyleBackColor = true;
@@ -376,9 +421,11 @@
             this.groupBox4.Controls.Add(this.OldNameFile);
             this.groupBox4.Controls.Add(this.OldNameFolder);
             this.groupBox4.Controls.Add(this.label6);
-            this.groupBox4.Location = new System.Drawing.Point(433, 12);
+            this.groupBox4.Location = new System.Drawing.Point(577, 15);
+            this.groupBox4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(449, 106);
+            this.groupBox4.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.groupBox4.Size = new System.Drawing.Size(599, 130);
             this.groupBox4.TabIndex = 7;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Analyzing";
@@ -386,40 +433,43 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 46);
+            this.label5.Location = new System.Drawing.Point(20, 57);
+            this.label5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(81, 13);
+            this.label5.Size = new System.Drawing.Size(109, 17);
             this.label5.TabIndex = 1;
             this.label5.Text = "Old folder name";
             // 
             // OldNameFile
             // 
-            this.OldNameFile.Location = new System.Drawing.Point(108, 69);
+            this.OldNameFile.Location = new System.Drawing.Point(144, 85);
+            this.OldNameFile.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.OldNameFile.Name = "OldNameFile";
-            this.OldNameFile.Size = new System.Drawing.Size(308, 20);
+            this.OldNameFile.Size = new System.Drawing.Size(409, 22);
             this.OldNameFile.TabIndex = 10;
-            this.OldNameFile.Visible = false;
             // 
             // OldNameFolder
             // 
-            this.OldNameFolder.Location = new System.Drawing.Point(108, 43);
+            this.OldNameFolder.Location = new System.Drawing.Point(144, 53);
+            this.OldNameFolder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.OldNameFolder.Name = "OldNameFolder";
-            this.OldNameFolder.Size = new System.Drawing.Size(308, 20);
+            this.OldNameFolder.Size = new System.Drawing.Size(409, 22);
             this.OldNameFolder.TabIndex = 9;
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(15, 72);
+            this.label6.Location = new System.Drawing.Point(20, 89);
+            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(69, 13);
+            this.label6.Size = new System.Drawing.Size(93, 17);
             this.label6.TabIndex = 1;
             this.label6.Text = "Org file name";
-            this.label6.Visible = false;
             // 
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
+            this.listBox1.ItemHeight = 16;
             this.listBox1.Items.AddRange(new object[] {
             "Possible TAGS:",
             "<TAG> => Placeholder (append at end to preserve old folder names)",
@@ -432,16 +482,18 @@
             "<HOUR>",
             "<MIN>",
             "<SEC>"});
-            this.listBox1.Location = new System.Drawing.Point(18, 128);
+            this.listBox1.Location = new System.Drawing.Point(24, 158);
+            this.listBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(398, 108);
+            this.listBox1.Size = new System.Drawing.Size(529, 132);
             this.listBox1.TabIndex = 100;
             // 
             // OpenSettings
             // 
-            this.OpenSettings.Location = new System.Drawing.Point(18, 244);
+            this.OpenSettings.Location = new System.Drawing.Point(24, 300);
+            this.OpenSettings.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.OpenSettings.Name = "OpenSettings";
-            this.OpenSettings.Size = new System.Drawing.Size(95, 23);
+            this.OpenSettings.Size = new System.Drawing.Size(127, 28);
             this.OpenSettings.TabIndex = 18;
             this.OpenSettings.Text = "Save settings";
             this.OpenSettings.UseVisualStyleBackColor = true;
@@ -450,28 +502,18 @@
             // Logger
             // 
             this.Logger.FormattingEnabled = true;
-            this.Logger.Location = new System.Drawing.Point(18, 307);
+            this.Logger.ItemHeight = 16;
+            this.Logger.Location = new System.Drawing.Point(24, 378);
+            this.Logger.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Logger.Name = "Logger";
-            this.Logger.Size = new System.Drawing.Size(855, 199);
+            this.Logger.Size = new System.Drawing.Size(1139, 244);
             this.Logger.TabIndex = 101;
-            // 
-            // MoveOtherFiles
-            // 
-            this.MoveOtherFiles.AutoSize = true;
-            this.MoveOtherFiles.Checked = true;
-            this.MoveOtherFiles.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.MoveOtherFiles.Location = new System.Drawing.Point(183, 137);
-            this.MoveOtherFiles.Name = "MoveOtherFiles";
-            this.MoveOtherFiles.Size = new System.Drawing.Size(123, 17);
-            this.MoveOtherFiles.TabIndex = 21;
-            this.MoveOtherFiles.Text = "Move also other files";
-            this.MoveOtherFiles.UseVisualStyleBackColor = true;
             // 
             // ViewModelMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(885, 524);
+            this.ClientSize = new System.Drawing.Size(1180, 645);
             this.Controls.Add(this.Progress);
             this.Controls.Add(this.Logger);
             this.Controls.Add(this.OpenSettings);
@@ -489,6 +531,7 @@
             this.Controls.Add(this.FolderPathOutput);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.FolderPathInput);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "ViewModelMain";
             this.Text = "Image organizer";
             this.groupBox1.ResumeLayout(false);

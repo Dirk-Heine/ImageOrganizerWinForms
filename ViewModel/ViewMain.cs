@@ -186,6 +186,10 @@ namespace ImageOrganizerWinForms.ViewModel
                 // Analyze
                 FileData f = new FileData();
                 f.FilePath = filePaths[i];
+
+                // progress
+                _WorkerUi.ReportProgress((int)((double)(i) / _FilesToGo * 100), $"Analyzing {f.FilePath.Replace(FolderPathInput.Text, "")}");
+                
                 _AnalyzeFile(ref f);
 
                 // canceling
@@ -195,8 +199,6 @@ namespace ImageOrganizerWinForms.ViewModel
                     break;
                 }
 
-                // progress
-                _WorkerUi.ReportProgress((int)((double)(i) / _FilesToGo * 100), $"Analyzing {f.FilePath.Replace(FolderPathInput.Text, "")}");
             }
             ShowMessage($"Valid files found: {_FileCounter}");
             ShowMessage($"Files to move: {FilesToMove.Value}");
@@ -313,6 +315,7 @@ namespace ImageOrganizerWinForms.ViewModel
                 f.FileSize = fi.Length;
                 f.DateTaken = fi.LastWriteTime; //fi.CreationTime;
                 f.CameraType = "Unknown";
+                fi = null;
 
                 // Get image meta data
                 if (f.IsImage() || f.IsVideo())
@@ -348,8 +351,15 @@ namespace ImageOrganizerWinForms.ViewModel
                             {
                             }
                             if (!string.IsNullOrEmpty(cameraType)) f.CameraType = cameraType;
+
+                            //fs.Dispose();
+                            //myImage.Dispose();
                         }
                     }
+
+                    string dTold = f.DateTaken.ToString();
+                    if (f.ConvertFileName2DateTaken(OldNameFile.Text))
+                        ShowMessage($"DateTaken changed {dTold} -> {f.DateTaken.ToString()}");
 
                     // Create new name
                     _GetNewFileName(ref f);
